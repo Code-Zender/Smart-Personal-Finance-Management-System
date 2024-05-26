@@ -5,12 +5,13 @@ Intelligentes persönliches Finanzmanagement-System
 
     Funktionen:
 
-    Benutzerregistrierung und -anmeldung: Sichere Authentifizierung und Autorisierung.
-    Transaktionsverwaltung: Automatische Kategorisierung und Analyse von Banktransaktionen.
-    Budgetierung: Erstellung und Verfolgung von Budgets basierend auf historischen Daten und Vorhersagen.
-    Finanzielle Vorhersagen: Einsatz von maschinellem Lernen zur Vorhersage zukünftiger Ausgaben und Einnahmen.
-    Anlageberatung: Personalisierte Empfehlungen für Investitionen basierend auf Benutzerprofilen und Marktdaten.
-    Benachrichtigungen und Alarme: Echtzeit-Benachrichtigungen über wichtige Ereignisse (z.B. Budgetüberschreitungen).
+    - Benutzerregistrierung und -anmeldung: Sichere Authentifizierung und       Autorisierung.
+    - Transaktionsverwaltung: Automatische Kategorisierung und Analyse von Banktransaktionen.
+    - Budgetierung: Erstellung und Verfolgung von Budgets basierend auf historischen Daten und Vorhersagen.
+    - Finanzielle Vorhersagen: Einsatz von maschinellem Lernen zur Vorhersage zukünftiger Ausgaben und Einnahmen.
+    - Anlageberatung: Personalisierte Empfehlungen für Investitionen basierend auf Benutzerprofilen und Marktdaten.
+    - Benachrichtigungen und Alarme: Echtzeit-Benachrichtigungen über wichtige Ereignisse (z.B. Budgetüberschreitungen).
+    
     Technologien:
 
     Frontend: HTML, CSS, JavaScript (React.js oder Angular)
