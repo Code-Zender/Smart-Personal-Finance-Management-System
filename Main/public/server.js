@@ -8,7 +8,7 @@ const port = process.env.PORT || 4000;
 app.use(express.json());
 
 app.get('/login/register.js', (req, res) => {
-    const dataa = req.body; // Korrigieren Sie den Zugriff auf req.body
+    const dataa = req.body;
     console.log(dataa);
     res.send("Data received");
 });
@@ -31,6 +31,10 @@ app.listen(port, () => {
     ipAddresses.forEach(ip => {
         console.log(`Example app listening at http://${ip}:${port}`);
     });
+
+    if (ipAddresses.length === 0) {
+        console.log(`Example app listening on port ${port}, but no external IP address found.`);
+    }
 });
 
 connectDB().catch(console.dir);
