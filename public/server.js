@@ -15,5 +15,5 @@ app.listen(port, () => {
 })
 
 connectDB().catch(console.dir);
-data= {deineMutter:"IUGBGBGBGBGBGBGBGBGBGBGB"}
+data= {TEST:"TEST"}
 add(data);
