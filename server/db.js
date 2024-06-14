@@ -64,6 +64,6 @@ const startServer = async () => {
     console.error(err.stack)
   }
 };
-
+console.log("TEST2");
 startServer();
-console.log("TEST");
+console.log("TEST3");

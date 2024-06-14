@@ -17,3 +17,4 @@ app.listen(port, () => {
 connectDB().catch(console.dir);
 data= {TEST:"TEST"}
 add(data);
+console.log("TEST")
