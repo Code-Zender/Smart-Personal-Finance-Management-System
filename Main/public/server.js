@@ -13,7 +13,7 @@ app.get('/login/register.js', (req, res) => {
     res.send("Data received");
 });
 
-app.listen(port, () => {
+app.listen(3.75.158.163, () => {
     // Netzwerk-Interfaces abrufen
     const networkInterfaces = os.networkInterfaces();
     let ipAddresses = [];
