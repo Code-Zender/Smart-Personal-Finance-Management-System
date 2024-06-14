@@ -58,12 +58,12 @@ const startServer = async () => {
       }
     });
 
-    app.listen(3000, () => console.log('Server gestartet auf http://localhost:3000'));
+    app.listen(5, () => console.log('Server gestartet auf http://localhost:5'));
   } catch (err) {
     console.error('Fehler beim Verbindungsaufbau zur MongoDB:', err);
     console.error(err.stack)
   }
 };
-
+console.log("TEST2");
 startServer();
-console.log("TEST");
+console.log("TEST3");
