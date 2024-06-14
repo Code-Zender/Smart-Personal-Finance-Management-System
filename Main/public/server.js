@@ -2,7 +2,7 @@ const { connectDB, dbClient, add } = require('../server/db.connect.js');
 const express = require('express');
 const os = require('os');
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3.75.158.163;
 
 // Middleware für JSON Parsing
 app.use(express.json());
@@ -13,7 +13,7 @@ app.get('/login/register.js', (req, res) => {
     res.send("Data received");
 });
 
-app.listen(3.75.158.163, () => {
+app.listen(port, () => {
     // Netzwerk-Interfaces abrufen
     const networkInterfaces = os.networkInterfaces();
     let ipAddresses = [];
