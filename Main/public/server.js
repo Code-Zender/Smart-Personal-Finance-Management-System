@@ -7,7 +7,7 @@ const port = process.env.PORT || 4000;
 // Middleware für JSON Parsing
 app.use(express.json());
 
-app.get('/', (req, res) => {
+app.get('/login/register.js', (req, res) => {
     const dataa = req.body; // Korrigieren Sie den Zugriff auf req.body
     console.log(dataa);
     res.send("Data received");
