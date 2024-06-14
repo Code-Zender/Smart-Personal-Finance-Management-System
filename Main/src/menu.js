@@ -18,7 +18,10 @@ function toggleMenu() {
                         con = document.getElementById("op3"); 
                         break;
             }
-            con.appendChild(op)
+            if (con.innerHTML==""){
+               con.appendChild(op) 
+            }
+            
         }
     }else{
         for(let i=1; i <= 4; i++){
@@ -43,7 +46,9 @@ function toggleMenu() {
                         con = document.getElementById("op3"); 
                         break;
             }
-            con.appendChild(op)
+            if (con.innerHTML==""){
+                con.appendChild(op)
+            }
         }
     }
 

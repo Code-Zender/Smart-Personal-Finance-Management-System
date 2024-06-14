@@ -1,54 +1,69 @@
-console.log("A")
-const { MongoClient, ServerApiVersion } = require('mongodb');
-console.log("A")
-const uri = "mongodb+srv://MarcZ:Gibmir5nutella!@cluster0.tpimwio.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-console.log("A")
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-console.log("b")
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+const url = 'mongodb+srv://MarcZ:Gibmir5nutella!@cluster0.tpimwio.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/Main/index.html');
+  console.log("1");
 });
-console.log("b")
-async function run(docs) {
+
+app.get('/login/register.html', (req, res) => {
+  res.sendFile(__dirname + '/login/register.html');
+  
+  app.post('/submitRegistration',async (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    const data = [{username,password}]
+    console.log("4");
+    try {
+      const result = await db.collection('user-data').insertOne(data);
+      console.log('Daten erfolgreich gespeichert:', result.ops);
+      res.status(200).json({ message: 'Daten erfolgreich gespeichert' });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: 'Fehler beim Speichern der Daten in der Datenbank',err });
+    }
+  })
+});
+
+
+  
+
+
+const startServer = async () => {
   try {
-    console.log("b")
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    console.log("c")
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    const db = client.db("user");
-    const coll = db.collection("user-data");
-    
-    const result = await coll.insertMany(docs);
+    console.log("2");
+    const client = new MongoClient(url, {});
+    console.log("3");
+    console.log('Verbunden mit der MongoDB');
+    const db = client.db('user'); // Datenbank auswählen
 
-    const cursor = coll.find({ Email: "marc.falkensee@gmail.com" });
+    // Route für den Datenempfang und -speicherung
+    app.post('/submitData', async (req, res) => {
+      const data = req.body;
+      console.log("4");
+      try {
+        const result = await db.collection('user-data').insertOne(data);
+        console.log('Daten erfolgreich gespeichert:', result.ops);
+        res.status(200).json({ message: 'Daten erfolgreich gespeichert' });
+      } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Fehler beim Speichern der Daten in der Datenbank' });
+      }
+    });
 
-    // iterate code goes here
-    await cursor.forEach(console.log);
-  } finally {
-    // database and collection code goes here
-    
-
-
-
-
-
-
-    // Ensures that the client will close when you finish/error
-    await client.close();
+    app.listen(3000, () => console.log('Server gestartet auf http://localhost:3000'));
+  } catch (err) {
+    console.error('Fehler beim Verbindungsaufbau zur MongoDB:', err);
+    console.error(err.stack)
   }
-}
-function TEst(data){
-  run(data).catch(console.dir);
+};
 
-}
-
-
-
-
+startServer();
+console.log("TEST");

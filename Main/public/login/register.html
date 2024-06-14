@@ -3,19 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact Form</title>
+  <title>Register Form</title>
   <link rel="stylesheet" href="..\..\src\Style.css">
-  <script src="../../server/db.js"></script>
+  <script defer src="register.js"></script>
 </head>
 <body>
   <div class="container">
-    <form action="/submitRegistration" method="post">
-      <label for="username">Benutzername:</label><br>
-      <input type="text" id="username" name="username"><br>
-      <label for="password">Passwort:</label><br>
-      <input type="password" id="password" name="password"><br>
-      <input type="submit" value="Registrieren">
-    </form>
+    <label for="username">Username:</label><br>
+    <input type="text" id="username" name="username"><br>
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password"><br>
+    <input type="submit" value="Register" onclick="submitForm()">
   </div>
 </body>
 </html>
