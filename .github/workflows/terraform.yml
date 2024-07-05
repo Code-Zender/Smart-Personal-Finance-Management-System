@@ -31,6 +31,13 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Debug Output
+        run: |
+          ls -la
+          pwd
+          echo "Contents of main.tf:"
+          cat main.tf
+
       - name: Terraform Format
         run: terraform fmt -check
 
@@ -40,20 +47,3 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
-
-      # Additional step for deploying GitHub Pages using GitHub Actions
-      - name: Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-          git checkout main  # Make sure we are on the main branch
-          git pull origin main  # Pull latest changes from the main branch
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
-          git add .  # Add all changes to the git index
-          git commit -m "Deploying to GitHub Pages by GitHub Actions"
-          git push origin main  # Push changes to GitHub
-
-          # Optional: Deploy to GitHub Pages using an action
-          # uses: peaceiris/actions-gh-pages@v3
-          # with:
-          #   github_token: ${{ secrets.GITHUB_TOKEN }}
