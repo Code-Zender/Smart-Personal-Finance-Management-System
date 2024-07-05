@@ -32,6 +32,16 @@
     transform: translateY(-6px) rotate(-45deg);
 }
 
+.menu-options a {
+    text-decoration: none; /* Entfernt den Unterstrich */
+    color: white; /* Erbt die Textfarbe des Eltern-Elements */
+    background: none; /* Entfernt den Hintergrund */
+  }
+
+.menu-options a:hover {
+        color: white; /* Optional: Farbe bei Hover ändern */
+        background: none; 
+    }  
 
 
 .menu-options.open {

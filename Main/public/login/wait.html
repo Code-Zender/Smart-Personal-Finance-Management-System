@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        async function checkEmailConfirmation() {
+            try {
+                const response = await fetch('/wait', {
+                    method: 'POST'
+                });
+                const data = await response.text();
+                if (data === "true") {
+                    window.location.href = '/';
+                } else {
+                    setTimeout(checkEmailConfirmation, 2000); // Check again after 2 seconds
+                }
+            } catch (error) {
+                console.error('Error checking email confirmation:', error);
+                setTimeout(checkEmailConfirmation, 2000); // Retry after 2 seconds if there's an error
+            }
+        }
+
+        window.addEventListener('load', checkEmailConfirmation);
+    </script>
+</head>
+<body>
+    <h1>Please confirm your email address</h1>
+</body>
+</html>

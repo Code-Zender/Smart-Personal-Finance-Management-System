@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
+    <script src="..\src\index.js"></script>
+    <link rel="stylesheet" href="../src/Style.css">
+    <link rel="stylesheet" href="../src/menu.css">
+    <script src="../src/menu.js"></script>
+    <title>Smart Personal Finance Management System</title>
+  </head>
+  <style>
+    #chartsIframe{
+      background: #333;
+      border: none;
+      border-radius: 2px;
+      box-shadow: 0 5px 10px 0 rgb(22, 22, 22);
+      width: 75vh;
+      height: 50vh;
+    }
+  </style>
+  <body>
+    <header class="Header">
+      <div class="menu-btn" onclick="toggleMenu()">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+      <ul class="menu-options" id="A">
+        <li id="op1"></li>
+        <li id="op2"></li>
+        <li id="op3"></li>
+        <li id="op4"></li>
+        <li id="op5" onclick="Logout()">Logout</li>
+      </ul>
+      <div ng-app="myApp" ng-controller="myCtrl" class="Head">
+        <h1>Welcome {{back}} {{message}}</h1>
+      </div>
+
+      <a href="#" id="Link" >Login</a>
+      <a href="#" id="Link2">Register</a>
+      
+    </header>
+    <div class="all">
+      <div class="stats">
+        <p></p>
+      </div>  
+      <div class="charts">
+        <iframe id = "chartsIframe" title="Charts" src="https://charts.mongodb.com/charts-project-0-rbimxmy/embed/dashboards?id=29fad5fe-f667-4c81-9234-07912873b353&theme=light&autoRefresh=true&maxDataAge=-1&showTitleAndDesc=false&scalingWidth=scale&scalingHeight=scale"></iframe> </div>
+      <div class="actions-Now">
+        <p></p>
+      </div>
+    </div>
+
+  </body>
+</html>
+

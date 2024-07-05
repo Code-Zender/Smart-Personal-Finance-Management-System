@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Confirmation</title>
+    <script>
+        async function conf() {
+            const response = await fetch('/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ "emailConfirm": true })
+            });
+            if (response.ok) {
+                console.log('Request successful');
+            } else {
+                console.error('Request failed');
+            }
+        }
+
+        window.addEventListener('load', conf);
+    </script>
+</head>
+<body>
+    <h1>Your Email is confirmed...</h1>
+    <h2>You can close this Page now</h2>
+</body>
+</html>
