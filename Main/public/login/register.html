@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Form</title>
+  <link rel="stylesheet" href="..\..\src\register.css">
+  <script defer src="register.js"></script>
+</head>
+<body>
+  <h1 id="headline" class="headline">Register</h1>
+  <div class="container">
+    <form id="transactionForm">
+      <label for="name">User Name:</label>
+      <p>(the name we call you)</p>
+      <input type="name" id="name" name="name" required>
+      <br>
+      <label for="fullName">Full Name:</label>
+      <p>(Your real full name)</p>
+      <input type="name" id="fullName" name="fullName" required>
+      <br>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+      <br>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+      <br>
+      <button type="submit">Register</button>
+    </form>
+  </div>
+</body>
+</html>
+
+<script>
+  document.getElementById('transactionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const fullName = document.getElementById('fullName').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const response = await fetch('/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({name,fullName, email, password }),
+    });
+
+    const data  = await response.json();
+    localStorage.setItem('token', data.token);
+    window.location.href = '/wait';
+  });
+</script>

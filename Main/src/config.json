@@ -1,0 +1,33 @@
+{
+    "index": {
+      "loginUrl": "http://localhost:3000/login",
+      "registerUrl": "http://localhost:3000/register",
+      "charts": "http://localhost:3000/charts",
+      "addFinances": "http://localhost:3000/addFinances",
+      "displayData": "http://localhost:3000/displayData",
+      "profileUrl": "http://localhost:3000/profileUrl",
+      "aboutUS":"http://localhost:3000/aboutUS",
+      "aboutThisProgramm":"http://localhost:3000/aboutThisProgramm",
+      "privacyPolicy":"http://localhost:3000/privacyPolicy",
+      "ContactUS":"http://localhost:3000/ContactUS"
+    },
+    "routes": {
+      "root": "../Main/public/index.html",
+      "login": "../Main/public/login/login.html",
+      "register": "../Main/public/login/register.html",
+      "wait":"../Main/public/login/wait.html",
+      "confirm":"../Main/public/login/confirm.html",
+      "config": "../Main/src/config.json",
+      "prove":"../Main/public/login/prove.html",
+      "charts": "../Main/public/functions/charts.html",
+      "addFinances": "../Main/public/functions/addFinances.html",
+      "displayData": "../Main/public/functions/displayData.html",
+      "profileUrl": "../Main/public/functions/profile.html",
+      "aboutUS": "../Main/information/aboutUS.html",
+      "aboutThisProgramm": "../Main/information/about.html",
+      "privacyPolicy": "../Main/information/privacy.html",
+      "ContactUS": "../Main/information/Contact.html",
+      "menu": "../Main/src/menu.js"
+    }
+  }
+  
