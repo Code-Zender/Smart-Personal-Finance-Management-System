@@ -132,24 +132,6 @@ app.post('/getTransactions', async (req, res) => {
 });
 
 
-
-
-
-
-
-
-https.createServer(credentials, app).listen(port, () => {
-  console.log(`Server running at https://smart-personal-finance-management-system:${port}/`);
-  console.log("Server started at " + new Date());
-  runTime(serverStartTime = Date.now());
-});
-
-
-
-
-
-
-
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
   console.log("Server started at " + new Date());
