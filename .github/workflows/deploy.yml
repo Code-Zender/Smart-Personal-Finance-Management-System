@@ -1,52 +1,34 @@
-name: Start and Test Server
+name: Deploy to GitHub Pages
 
 on:
-  workflow_dispatch:  # Manuelle Ausführung des Workflows
+  push:
+    branches:
+      - main  # Branch anpassen, je nachdem welcher Branch die statischen Dateien enthält
 
 jobs:
-  start-and-test-server:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./server
-
-      - name: Start server
+      - name: Build and Deploy to GitHub Pages
         run: |
-          nohup node server.js > server.log 2>&1 &
-          echo "Server started"
+          npm install  # Installieren Sie hier Ihre Abhängigkeiten, falls erforderlich
+          npm run build  # Bauen Sie hier Ihre statischen Dateien
 
-      - name: Wait for server to start
-        run: |
-          sleep 10  # Wartezeit, damit der Server starten kann
+          mkdir -p dist
+          cp -r client/* dist/  # Kopieren Sie die statischen Dateien in ein dist-Verzeichnis
 
-          # Ermitteln Sie die öffentliche IP-Adresse des GitHub Actions Runners
-          PUBLIC_IP=$(curl -s ifconfig.me)
-          echo "Server running at http://$PUBLIC_IP:3000/"
+          # Konfigurieren Sie hier Ihre GitHub Pages
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
 
-      - name: Open browser for testing
-        run: |
-          # Öffnen Sie den Browser für die Testseite (ersetzen Sie die URL entsprechend)
-          echo "Öffnen Sie Ihren Browser und navigieren Sie zu http://$PUBLIC_IP:3000/"
-
-      - name: Wait for manual confirmation
-        run: |
-          echo "Bitte führen Sie Ihre Tests im Browser durch."
-          echo "Wenn Sie fertig sind, beenden Sie den Workflow."
-
-          # Halten Sie den Workflow offen, bis er manuell beendet wird
-          sleep infinity
-
-      - name: Stop server
-        run: |
-          ps aux | grep 'node server.js' | grep -v grep | awk '{print $2}' | xargs kill
+          # Veröffentlichen Sie die statischen Dateien auf GitHub Pages
+          git checkout gh-pages  # Stellen Sie sicher, dass der Branch gh-pages existiert
+          mv -f dist/* .
+          git add .
+          git commit -m "Deploying to GitHub Pages"
+          git push origin gh-pages  # Pushen Sie die Änderungen zum Bereitstellen
 
