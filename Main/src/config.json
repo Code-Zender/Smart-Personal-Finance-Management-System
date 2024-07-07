@@ -1,15 +1,15 @@
 {
     "index": {
-      "loginUrl": "http://localhost:3000/login",
-      "registerUrl": "http://localhost:3000/register",
-      "charts": "http://localhost:3000/charts",
-      "addFinances": "http://localhost:3000/addFinances",
-      "displayData": "http://localhost:3000/displayData",
-      "profileUrl": "http://localhost:3000/profileUrl",
-      "aboutUS":"http://localhost:3000/aboutUS",
-      "aboutThisProgramm":"http://localhost:3000/aboutThisProgramm",
-      "privacyPolicy":"http://localhost:3000/privacyPolicy",
-      "ContactUS":"http://localhost:3000/ContactUS"
+      "loginUrl": "/login",
+      "registerUrl": "/register",
+      "charts": "/charts",
+      "addFinances": "/addFinances",
+      "displayData": "/displayData",
+      "profileUrl": "/profileUrl",
+      "aboutUS":"/aboutUS",
+      "aboutThisProgramm":"/aboutThisProgramm",
+      "privacyPolicy":"/privacyPolicy",
+      "ContactUS":"/ContactUS"
     },
     "routes": {
       "root": "../Main/public/index.html",
