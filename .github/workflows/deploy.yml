@@ -20,21 +20,23 @@ jobs:
         run: npm install
         working-directory: ./server
 
-      - name: Start server in background
-        run: node server.js &
-        working-directory: ./server
+      - name: Start server
+        run: |
+          nohup node server.js > server.log 2>&1 &
+          echo "Server started"
 
       - name: Wait for server to start
         run: |
           sleep 10  # Wartezeit, damit der Server starten kann
 
-          # Optional: Zeigen Sie die URL an, unter der der Server erreichbar ist
-          echo "Server running at http://localhost:3000/"
+          # Ermitteln Sie die öffentliche IP-Adresse des GitHub Actions Runners
+          PUBLIC_IP=$(curl -s ifconfig.me)
+          echo "Server running at http://$PUBLIC_IP:3000/"
 
       - name: Open browser for testing
         run: |
           # Öffnen Sie den Browser für die Testseite (ersetzen Sie die URL entsprechend)
-          echo "Öffnen Sie Ihren Browser und navigieren Sie zu http://localhost:3000/"
+          echo "Öffnen Sie Ihren Browser und navigieren Sie zu http://$PUBLIC_IP:3000/"
 
       - name: Wait for manual confirmation
         run: |
