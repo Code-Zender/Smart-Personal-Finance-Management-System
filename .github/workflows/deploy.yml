@@ -19,7 +19,7 @@ jobs:
           npm run build  # Bauen Sie hier Ihre statischen Dateien
 
           mkdir -p dist
-          cp -r client/* dist/  # Kopieren Sie die statischen Dateien in ein dist-Verzeichnis
+          cp -r Main/public/* dist/  # Kopieren Sie die statischen Dateien in ein dist-Verzeichnis
 
           # Konfigurieren Sie hier Ihre GitHub Pages
           git config --global user.email "actions@github.com"
