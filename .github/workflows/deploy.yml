@@ -24,7 +24,7 @@ jobs:
       - name: Build and deploy to GitHub Pages
         run: |
           mkdir -p gh-pages
-          cp -r public/* gh-pages/
+          cp -r Main/* gh-pages/
           cd gh-pages
           git init
           git config user.name "GitHub Actions"
