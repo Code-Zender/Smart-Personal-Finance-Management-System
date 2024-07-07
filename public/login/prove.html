@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Six-Digit Code Input</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .code-input {
+            display: flex;
+            gap: 10px;
+        }
+        .code-input input {
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="code-input">
+        <input title="code" id="code1"type="text" maxlength="1" oninput="moveToNext(this, 'code2')">
+        <input title="code" id="code2" type="text" maxlength="1" oninput="moveToNext(this, 'code3')">
+        <input title="code" id="code3" type="text" maxlength="1" oninput="moveToNext(this, 'code4')">
+        <input title="code" id="code4" type="text" maxlength="1" oninput="moveToNext(this, 'code5')">
+        <input title="code" id="code5" type="text" maxlength="1" oninput="moveToNext(this, 'code6')">
+        <input title="code" id="code6" type="text" maxlength="1" oninput="conf()">
+        <button type="submit" onclick="conf()">Submit</button>
+    </div>
+
+    <script>
+        
+        function moveToNext(current, nextFieldId) {
+            if (current.value.length === 1 && nextFieldId) {
+                document.getElementById(nextFieldId).focus();
+            }
+        }
+        
+        async function conf() {
+            jsonData = await read()
+            console.log("A1")
+            let code = ""
+            for(let i = 1;i<=6;i++){
+                code += document.getElementById("code" + i).value;
+                console.log(code)
+            }
+            console.log("A2")
+
+            const response = await fetch('/prove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({  "email": jsonData.email,"codeConfirm": code })
+                
+            });
+            console.log("A3")
+            const data = await response.text();
+            if (data === "true") {
+                    window.location.href = '/';
+                }
+        }            
+        async function checkEmailConfirmation() {
+            console.log("A4")
+            jsonData = await read()
+            try {
+                console.log("a")
+                const response = await fetch('/prove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({  "email": jsonData.email })
+                
+            });
+                console.log("a")
+                
+                console.log("a")
+                console.log(data)
+                if (data === "true") {
+                    window.location.href = '/';
+                } else {
+                    setTimeout(checkEmailConfirmation, 2000); // Check again after 2 seconds
+                }
+            } catch (error) {
+                console.error('Error checking email confirmation:', error);
+                setTimeout(checkEmailConfirmation, 2000); // Retry after 2 seconds if there's an error
+            }
+        }
+        async function sendMail(){
+            jsonData = await read()
+            console.log(jsonData.email)
+            const response = await fetch('/prove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({  "email": jsonData.email })
+                
+            });
+        }
+        async function read(){
+            const token = localStorage.getItem('token');
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            jsonData = JSON.parse(jsonPayload);
+            return jsonData
+        }
+        window.addEventListener('load', sendMail);
+  
+    </script>
+</body>
+</html>

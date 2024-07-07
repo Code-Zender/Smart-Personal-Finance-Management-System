@@ -1,0 +1,63 @@
+.menu-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 20px;
+    cursor: pointer;
+    z-index: 9999;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+}
+
+.bar {
+    width: 100%;
+    height: 3px;
+    background-color: #fff;
+    transition: transform 0.3s ease;
+}
+
+
+
+.menu-btn.open .bar:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+
+.menu-btn.open .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-btn.open .bar:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+.menu-options a {
+    text-decoration: none; /* Entfernt den Unterstrich */
+    color: white; /* Erbt die Textfarbe des Eltern-Elements */
+    background: none; /* Entfernt den Hintergrund */
+  }
+
+.menu-options a:hover {
+        color: white; /* Optional: Farbe bei Hover ändern */
+        background: none; 
+    }  
+
+
+.menu-options.open {
+    display: block;
+}
+
+.menu-options li {
+    color: #fff;
+    background-color: #444; /* Dunkleres Grau für Menüoptionen */
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.menu-options li:hover {
+    background-color: #555; /* Dunkleres Grau im Hover-Zustand */
+    
+}
