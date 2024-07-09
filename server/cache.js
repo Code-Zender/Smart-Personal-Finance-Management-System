@@ -1,26 +1,32 @@
 const fs = require('fs').promises;
+const Url = "localhost:3000"
+const path = require('path');
+const configPath = path.join(__dirname, '../Main/src/config.json');
+let config;
+
+
+
+
 
 async function loadConfig() {
-    console.log("TEST");
     try {
-        const response = await fetch('/config');
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const config = await response.json();
-        return config
+        const data = await fs.readFile(configPath, 'utf8');
+        config = JSON.parse(data);
+        console.log('Config loaded:', config);
     } catch (error) {
         console.error('Error loading config:', error);
     }
 }
 
+loadConfig();
+
 
 
 async function saveInCache(email, code) {
     console.log("A");
-    config = await loadConfig()
-    link = config.routes.cache
+    
     try {
+        const link = config.routes.cache;
         let fileData;
         try {
             fileData = await fs.readFile(link, 'utf8');
@@ -49,7 +55,11 @@ async function saveInCache(email, code) {
 
 async function readCache() {
     try {
-        const fileData = await fs.readFile('../Main/server/cache.json', 'utf8');
+        const link = config.routes.cache;
+        
+        const fileData = await fs.readFile(link, 'utf8');
+        console.log(link,fileData)
+
         if (fileData) {
             return JSON.parse(fileData);
         } else {
@@ -68,10 +78,11 @@ async function readCache() {
 
 async function removeCache(email) {
     try {
-        const fileData = await fs.readFile('../Main/server/cache.json', 'utf8');
+        const link = config.routes.cache;
+        const fileData = await fs.readFile(link, 'utf8');
         let json = JSON.parse(fileData);
         json = json.filter(user => user.email !== email);
-        await fs.writeFile('../Main/server/cache.json', JSON.stringify(json, null, 2));
+        await fs.writeFile(link, JSON.stringify(json, null, 2));
         console.log('Data deleted');
     } catch (err) {
         if (err.code === 'ENOENT') {

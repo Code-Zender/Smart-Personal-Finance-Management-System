@@ -53,9 +53,7 @@ app.post('/login', async (req, res) => {
     }
     
     if (await bcrypt.compare(password, user.password)) {
-      
-      const token = jwt.sign({ email: user.email, name: user.name, userID:user._id.toString() }, 'your_jwt_secret', { expiresIn: '1h' });
-      
+      const token = jwt.sign({ email: user.email}, 'your_jwt_secret', { expiresIn: '0.5h' });
       res.json({ token });
     } else {
       res.status(403).send('Invalid credentials');
@@ -73,7 +71,7 @@ app.post('/wait', async (req, res) => {
   }
 });
 
-app.post('/config', async (req, res) => {
+app.post('/confirm', async (req, res) => {
   if (req.body.emailConfirm === true) {
     emailConfirm = true;
   }
@@ -98,6 +96,8 @@ app.post('/prove', async (req, res) => {
 
     email = req.body.email
     isSet = await isEmailInCache(email)
+    const user = await findUserByEmail(email)
+    console.log(!isSet)
     if (!isSet){
       approveNumber = getRandomInt(10000, 999999);
       console.log(email,approveNumber)
@@ -107,7 +107,9 @@ app.post('/prove', async (req, res) => {
       
       code = await getCodeByEmail(email)
       if(toString(req.body.codeConfirm) ==  toString(code)){
-        res.send(true)
+        const token = jwt.sign({ email: user.email, name: user.name, userID:user._id.toString() }, 'your_jwt_secret', { expiresIn: '1h' });
+        res.send({ token })
+        
         removeCache(email)
       }
     }

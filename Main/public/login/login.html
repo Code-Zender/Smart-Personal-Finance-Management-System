@@ -23,37 +23,41 @@
         </body>
     </html>
 <script>
-    async function send(){
-
+    document.getElementById('transactionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      alert(password)
-      alert(email+" "+password)
+
       const response = await fetch('/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ email, password })
-        
       });
-      alert(response)
-      console.log("a")
-      alert(response.ok)
+
+     
+
       if (response.ok) {
-        alert("test")
+
         const data = await response.json();
-        alert(data)
-        console.log("YES")
-        localStorage.setItem('token', data.token);
+
+       
+        if(data){
+
+          alert(data)
+          localStorage.setItem('token', data.token);
+          const token = localStorage.getItem('token');
+
+          window.location.href = '/prove'
+        }
         
       } else {
-        console.log("no")
+
         alert('Login failed');
       }
-    if(false){
-      window.location.href = '/prove';
-    }
- }
+      
+    
+ });
 
 </script>
