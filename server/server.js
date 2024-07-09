@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------------------------------------------------------
-const Url = "https://nd27d2c4-3000.euw.devtunnels.ms/" // change based on Codespace/localhost/serverUrl
+const Url = "localhost:3000/" // change based on Codespace/localhost/serverUrl
 // ---------------------------------------------------------------------------------------------------------------------------
 const express = require('express');
 const path = require('path');
@@ -199,6 +199,9 @@ app.get('/ContactUS', (req, res) => {
 app.get('/debug.clear.database', (req, res) => {
   res.sendFile(path.join(__dirname, config.routes.clearDATA));
 });
+app.get('/cacheWR',(req,res) => {
+  res.sendFile(path.join(__dirname, config.routes.cache));
+})
 
 
 function sleep(ms) {

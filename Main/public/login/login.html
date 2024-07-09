@@ -17,34 +17,43 @@
                     <label for="password">Password:</label>
                     <input type="password" id="password" name="password" required>
                     <br>
-                    <button type="submit">Login</button>
+                    <button type="submit" onclick="send()">Login</button>
                   </form>
             </div>
         </body>
     </html>
 <script>
-    document.getElementById('login-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    async function send(){
 
-    const response = await fetch('/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, password })
-    });
-    
-    if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem('token', data.token);
-      
-    } else {
-      alert('Login failed');
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      alert(password)
+      alert(email+" "+password)
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+        
+      });
+      alert(response)
+      console.log("a")
+      alert(response.ok)
+      if (response.ok) {
+        alert("test")
+        const data = await response.json();
+        alert(data)
+        console.log("YES")
+        localStorage.setItem('token', data.token);
+        
+      } else {
+        console.log("no")
+        alert('Login failed');
+      }
+    if(false){
+      window.location.href = '/prove';
     }
-    window.location.href = '/prove';
-  });
- 
+ }
 
 </script>

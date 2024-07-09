@@ -27,7 +27,11 @@
       "aboutThisProgramm": "../Main/information/about.html",
       "privacyPolicy": "../Main/information/privacy.html",
       "ContactUS": "../Main/information/Contact.html",
-      "menu": "../Main/src/menu.js"
+      "menu": "../Main/src/menu.js",
+      "cache":"cache.js"
+    },
+    "src":{
+      "cache": "/cacheWR"
     }
   }
   

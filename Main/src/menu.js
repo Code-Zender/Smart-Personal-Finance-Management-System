@@ -1,10 +1,9 @@
 async function toggleMenu() {
     config = await loadConfig()
-    console.log(config)
-/*    
+  
     document.getElementById('Link').href = config.index.loginUrl;
     document.getElementById('Link2').href = config.index.registerUrl;
-*/     
+   
     const token = localStorage.getItem('token');
     let test = document.getElementById('op1').href
     if(token && !test){
