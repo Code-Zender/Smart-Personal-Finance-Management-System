@@ -3,9 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Profile</title>
+    <link rel="stylesheet" href="../../src/profile.css">
 </head>
 <body>
-    
+    <p id="show"></p>
 </body>
+<script>
+    async function load(){
+        try{
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('No token found. Please log in.');
+                return;
+            }
+
+            const user = parseJwt(token);
+            if (!user || !user.userID) {
+                alert('Invalid token.');
+                return;
+            }
+            const response = await fetch('/getProfile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ "email":user.email })
+                });
+
+                if (response.ok) {
+                    profile = await response.json();
+                    display(profile)
+                } else {
+                    alert('Failed to add transaction');
+                }
+        }catch{
+            console.log("error")
+        }
+    }
+    async function display(user){
+        console.log(user)
+        const li = document.createElement('p');
+                    
+                    li.innerHTML = `
+                        <span class="profile-name">${user.name}</span>
+                        <span class="profile-email">${user.email}</span>
+                        <span class="profile-fullname">${user.fullName}</span>
+                        <span class="profile-created">${user.Created}</span> 
+                        
+                    `;
+        document.getElementById('show').appendChild(li);
+
+    }
+    function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (error) {
+                console.error('Error parsing token:', error);
+                return null;
+            }
+        }
+    window.onload = load;
+
+
+
+
+
+
+
+
+</script>
 </html>

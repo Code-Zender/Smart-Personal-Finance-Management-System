@@ -143,6 +143,11 @@ app.post('/editTransaction', async (req, res) => {
   console.log();
   res.send(await editTransaction(_id, type, amount, currency, category, description, frequency, date))
 });
+app.post('/getProfile',async(req,res)=>{
+  const {email}=req.body;
+  console.log(await findUserByEmail(email))
+  res.json(await findUserByEmail(email)) 
+})
 
 app.listen(port, () => {
   console.log(`Server running at ${Url}`);

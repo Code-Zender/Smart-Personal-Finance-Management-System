@@ -1,0 +1,17 @@
+body{
+    background-color: #1c1c1c;
+    color: white;
+}
+.profile-name,
+.profile-email,
+.profile-fullname,
+.profile-created
+{
+    display: flex;
+    justify-content: center;
+    background: #333;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #666;
+    border-radius: 5px;
+}
