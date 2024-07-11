@@ -5,7 +5,7 @@ Intelligentes persönliches Finanzmanagement-System
 
     Funktionen:
 
-    - Benutzerregistrierung und -anmeldung: Sichere Authentifizierung und Autorisierung.
+    - Benutzerregistrierung und -Anmeldung: Sichere Authentifizierung und Autorisierung.
 
     
     - Transaktionsverwaltung: Automatische Kategorisierung und Analyse von Banktransaktionen.
@@ -17,8 +17,9 @@ Intelligentes persönliches Finanzmanagement-System
     Technologien:-
 
     Frontend: HTML, CSS, JavaScript (React.js oder Angular)
-    Backend: Python (Django oder Flask)
-    Datenbank: PostgreSQL für relationale Daten, Redis für Caching
+    Backend: Js 
+    Datenbank: mongoDB
     ML/AI: Python (TensorFlow, Scikit-Learn), Jupyter Notebooks für Datenanalyse und Modelltraining
     API-Integration: Finanz-APIs (z.B. Plaid) zur Anbindung an Bankkonten
 
+    hi Marc

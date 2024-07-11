@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Confirmation</title>
+    <link rel="stylesheet" href="..\..\src\login.css">
     <script>
         async function conf() {
-            const response = await fetch('/config', {
+            const response = await fetch('/confirm', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -24,7 +25,9 @@
     </script>
 </head>
 <body>
-    <h1>Your Email is confirmed...</h1>
-    <h2>You can close this Page now</h2>
+    <div class="headline">
+        <h1>Your Email is confirmed...</h1>
+        <h2>You can close this Page now</h2> 
+    </div>
 </body>
 </html>

@@ -28,7 +28,8 @@
       "privacyPolicy": "../Main/information/privacy.html",
       "ContactUS": "../Main/information/Contact.html",
       "menu": "../Main/src/menu.js",
-      "cache":"cache.js"
+      "cache":"cache.js",
+      "clearDATA": "../Main/debug/clear.html"
     },
     "src":{
       "cache": "/cacheWR"

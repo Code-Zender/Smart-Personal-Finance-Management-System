@@ -1,6 +1,6 @@
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-
+const { ObjectId } = require('mongodb');
 const dbUri = `mongodb+srv://MarcZ:Gibmir5nutella!@cluster0.tpimwio.mongodb.net/?retryWrites=true&w=majority`;
 const dbClient = new MongoClient(dbUri, {
   serverApi: {
@@ -50,6 +50,47 @@ async function getTransactions(userId) {
     return [];
   }
 }
+async function delTransaction(id) {
+  try {
+    // Convert string ID to ObjectId
+    const objectId = new ObjectId(id);
+
+    const result = await dbClient.db("user").collection("user-transactions").deleteOne({ _id: objectId });
+
+    if (result.deletedCount === 0) {
+      console.log("No transaction found with the provided ID.");
+    } else {
+      console.log("Transaction successfully deleted: " + JSON.stringify(result));
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error deleting transaction: ", error);
+    throw error;
+  }
+}
+
+async function editTransaction(id, type, amount, currency, category, description, frequency, date) {
+  console.log(id, amount, currency, category, description, frequency, date)
+
+  const filter = { _id: new ObjectId(id) };
+  const update = {
+    $set: {
+      type,
+      amount,
+      currency,
+      category,
+      description,
+      frequency,
+      date,
+    }
+  };
+  console.log(filter,update)
+  await dbClient.db("user").collection("user-transactions").updateOne(filter, update);
+  obj = await dbClient.db("user").collection('user-transactions').find({ _id: new ObjectId(id) })
+
+  return await dbClient.db("user").collection('user-transactions').find({ user_id: obj.user_id }).toArray();
+}
 
 module.exports = {
   connectDB,
@@ -57,5 +98,7 @@ module.exports = {
   findUserByEmail,
   clearCollection,
   addTransaction,
-  getTransactions
+  getTransactions,
+  delTransaction,
+  editTransaction
 };

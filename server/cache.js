@@ -1,5 +1,5 @@
 const fs = require('fs').promises;
-const Url = "localhost:3000"
+const Url = "https://xd63nvrk-3000.euw.devtunnels.ms"
 const path = require('path');
 const configPath = path.join(__dirname, '../Main/src/config.json');
 let config;

@@ -48,13 +48,18 @@
         .hidden {
             display: none;
         }
+        #NoDec{
+            text-decoration: none;
+            color: #ffffff
+        }
     </style>
 </head>
 <body>
 
     <h2 id="headline" class="headline">Transaction Form</h2>
-
+    
     <form id="transactionForm">
+        <a href="/" id="NoDec"><</a>
         <label for="type">Transaction Type</label>
         <select id="type" name="type" required>
             <option value="income">Income</option>
@@ -72,7 +77,6 @@
             <option value="JPY">JPY</option>
             <option value="AUD">AUD</option>
             <option value="CAD">CAD</option>
-            <!-- Weitere Währungen können hier hinzugefügt werden -->
         </select>
 
         <label for="category">Category</label>
@@ -108,6 +112,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
+            const recurringOptions = document.getElementById('recurringOptions');
+            recurringOptions.classList.add('hidden');
             // Set today's date as default
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('date').value = today;
@@ -116,8 +122,10 @@
             document.getElementById('recurring').addEventListener('change', function() {
                 const recurringOptions = document.getElementById('recurringOptions');
                 if (this.value === 'yes') {
+                    console.log("YES")
                     recurringOptions.classList.remove('hidden');
                 } else {
+                    console.log("NO")
                     recurringOptions.classList.add('hidden');
                 }
             });
@@ -128,7 +136,7 @@
             const token = localStorage.getItem('token');
             const user = parseJwt(token);
             const formData = {
-                user_id: user.userID,  // Replace with the actual user ID
+                user_id: user.userID,  
                 type: document.getElementById('type').value,
                 amount: parseFloat(document.getElementById('amount').value),
                 currency: document.getElementById('currency').value,
@@ -153,9 +161,11 @@
                 });
 
                 if (response.ok) {
-                    alert('Transaction successfully added!');
                     document.getElementById('transactionForm').reset();
-                    document.getElementById('date').value = today;  // Reset the date to today
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('date').value = today;
+                    const recurringOptions = document.getElementById('recurringOptions');
+                    recurringOptions.classList.add('hidden');
                 } else {
                     alert('Failed to add transaction');
                 }

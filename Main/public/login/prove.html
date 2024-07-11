@@ -4,40 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Six-Digit Code Input</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-        }
-        .code-input {
-            display: flex;
-            gap: 10px;
-        }
-        .code-input input {
-            width: 40px;
-            height: 40px;
-            font-size: 24px;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="..\..\src\login.css">
+
 </head>
 <body>
-    <div class="code-input">
-        <input title="code" id="code1"type="text" maxlength="1" oninput="moveToNext(this, 'code2')">
-        <input title="code" id="code2" type="text" maxlength="1" oninput="moveToNext(this, 'code3')">
-        <input title="code" id="code3" type="text" maxlength="1" oninput="moveToNext(this, 'code4')">
-        <input title="code" id="code4" type="text" maxlength="1" oninput="moveToNext(this, 'code5')">
-        <input title="code" id="code5" type="text" maxlength="1" oninput="moveToNext(this, 'code6')">
-        <input title="code" id="code6" type="text" maxlength="1" oninput="conf()">
-        <button type="submit" onclick="conf()">Submit</button>
+    <div>
+        <div class="code-input">
+            <input title="code" id="code1"type="text" maxlength="1" oninput="moveToNext(this, 'code2')">
+            <input title="code" id="code2" type="text" maxlength="1" oninput="moveToNext(this, 'code3')">
+            <input title="code" id="code3" type="text" maxlength="1" oninput="moveToNext(this, 'code4')">
+            <input title="code" id="code4" type="text" maxlength="1" oninput="moveToNext(this, 'code5')">
+            <input title="code" id="code5" type="text" maxlength="1" oninput="moveToNext(this, 'code6')">
+            <input title="code" id="code6" type="text" maxlength="1" oninput="conf()">
+            <button type="submit" onclick="conf()">Submit</button>
+        </div>
     </div>
-
     <script>
         
         function moveToNext(current, nextFieldId) {

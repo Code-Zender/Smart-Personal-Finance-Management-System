@@ -8,7 +8,7 @@ async function submitForm() {
     };
   
     try {
-      const response = await fetch('http://localhost:3000/register', { // Ensure the correct URL
+      const response = await fetch('http://localhost:3000/register', { // Ensure the correct HI MARC
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

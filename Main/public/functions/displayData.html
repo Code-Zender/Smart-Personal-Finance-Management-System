@@ -7,8 +7,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #1e1e1e; /* Dunkler Hintergrund für den Dark Mode */
-            color: #fff; /* Weiße Textfarbe */
+            background-color: #1e1e1e;
+            color: #fff;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -19,7 +19,7 @@
         }
         h2 {
             margin-top: 20px;
-            color: #4CAF50; /* Hellgrüne Überschrift */
+            color: #4CAF50;
             text-align: center;
         }
         form {
@@ -31,17 +31,15 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
-        input {
+        input, select, textarea {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            background-color: #333; /* Dunkleres Textfeld */
-            color: #fff; /* Weiße Schrift im Textfeld */
+            background-color: #333;
+            color: #fff;
         }
-
-
         .transactions {
             display: flex;
             justify-content: space-around;
@@ -55,7 +53,7 @@
         }
         .transactions h2 {
             text-align: center;
-            color: #4CAF50; /* Hellgrüne Überschrift */
+            color: #4CAF50;
         }
         .transactions .income {
             margin-right: 10px;
@@ -65,20 +63,20 @@
         }
         .transactions .income li,
         .transactions .expense li {
-            background: #333; /* Dunkler Hintergrund für Listenelemente */
+            background: #333;
             margin-bottom: 10px;
             padding: 10px;
-            border: 1px solid #666; /* Etwas dunklere Grenzen */
+            border: 1px solid #666;
             border-radius: 5px;
         }
         .transactions .income .transaction-date,
         .transactions .expense .transaction-date {
             font-weight: bold;
-            color: #4CAF50; /* Hellgrüne Farbe für Datum */
+            color: #4CAF50;
         }
         .transactions .income .transaction-amount,
         .transactions .expense .transaction-amount {
-            color: #4CAF50; /* Hellgrüne Farbe für Beträge */
+            color: #4CAF50;
         }
         .transactions .income .transaction-category,
         .transactions .expense .transaction-category {
@@ -88,12 +86,18 @@
         .transactions .expense .transaction-frequency {
             color: gray;
         }
+        .img {
+            width: 3vh;
+            height: 3vh;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
     <h2>Transactions</h2>
-
 
     <div class="transactions">
         <div class="income">
@@ -108,10 +112,68 @@
     <div class="total-amount" id="totalAmount">
         Gesamtvermögen: <span id="amountValue">0</span>
     </div>
-    <script>
-        async function load() {
-        
 
+    <div id="editFormContainer" style="display:none;">
+        <form id="editForm">
+            <a href="/" id="NoDec"><</a>
+            <label for="editType">Transaction Type</label>
+            <select id="editType" name="type" required>
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+            </select>
+
+            <label for="editAmount">Amount</label>
+            <input type="number" id="editAmount" name="amount" required>
+
+            <label for="editCurrency">Currency</label>
+            <select id="editCurrency" name="currency" required>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="JPY">JPY</option>
+                <option value="AUD">AUD</option>
+                <option value="CAD">CAD</option>
+            </select>
+
+            <label for="editCategory">Category</label>
+            <input type="text" id="editCategory" name="category" required>
+
+            <label for="editDate">Date</label>
+            <input type="date" id="editDate" name="date" required>
+
+            <label for="editDescription">Description</label>
+            <textarea id="editDescription" name="description" rows="4" required></textarea>
+
+            <label for="editRecurring">Is this a recurring transaction?</label>
+            <select id="editRecurring" name="recurring" required>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+
+            <div id="editRecurringOptions" class="hidden">
+                <label for="editFrequency">Frequency</label>
+                <select id="editFrequency" name="frequency">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+
+                <label for="editEndDate">End Date</label>
+                <input type="date" id="editEndDate" name="end_date">
+            </div>
+
+            <input type="hidden" id="editTransactionId">
+
+            <button type="button" onclick="saveEdit()">Save</button>
+            <button type="button" onclick="cancelEdit()">Cancel</button>
+        </form>
+    </div>
+
+    <script>
+        let transactions = [];
+
+        async function load() {
             const token = localStorage.getItem('token');
             if (!token) {
                 alert('No token found. Please log in.');
@@ -135,11 +197,11 @@
                     body: JSON.stringify({ id: userID })
                 });
 
-                if (!response.ok) {
-                    const transactions = await response.json();
+                if (response.ok) {
+                    transactions = await response.json();
                     displayTransactions(transactions);
-                    console.log(transactions)
-                    
+                    calculateTotal(transactions);
+                    console.log(transactions);
                 } else {
                     alert('Error fetching transactions');
                 }
@@ -147,7 +209,7 @@
                 console.error('Error:', error);
                 alert('Error fetching transactions');
             }
-        };
+        }
 
         function displayTransactions(transactions) {
             const incomeList = document.getElementById('incomeList');
@@ -164,7 +226,7 @@
                         <span class="transaction-date">${date}</span>: 
                         <span class="transaction-amount">${entry.amount} ${entry.currency}</span> - 
                         <span class="transaction-category">${entry.category}</span> 
-                        (${entry.description})
+                        (${entry.description}) <img class="img" src="../src/img/del.png" alt="Delete" onclick="delEntry('${entry._id}')"> <img class="img" src="../src/img/edit.png" alt="edit" onclick="editEntry('${entry._id}')">
                         ${entry.frequency ? `<br><span class="transaction-frequency">Frequency: ${entry.frequency}</span>` : ''}
                     `;
 
@@ -178,36 +240,119 @@
         }
 
         function generateTransactionEntries(transaction) {
-            const entries = [];
-            const startDate = new Date(transaction.date);
-            const endDate = transaction.end_date ? new Date(transaction.end_date) : new Date();
-            const currentDate = new Date(startDate);
+            // Assuming each transaction only needs one entry, return it in an array
+            // Modify this if transactions can have multiple entries
+            return [transaction];
+        }
 
-            while (currentDate <= endDate) {
-                entries.push({
-                    ...transaction,
-                    date: currentDate.toISOString()
+        async function delEntry(transactionID){
+            console.log(transactionID);
+            transactionID = transactionID.toString();
+            console.log(transactionID);
+            try {
+                const response = await fetch('/delTransaction', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: transactionID })
                 });
 
-                if (transaction.frequency === 'monthly') {
-                    currentDate.setMonth(currentDate.getMonth() + 1);
-                } else if (transaction.frequency === 'yearly') {
-                    currentDate.setFullYear(currentDate.getFullYear() + 1);
+                if (response.ok) {
+                    console.log(response);
                 } else {
-                    break;
+                    alert('Error deleting transaction');
                 }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting transaction');
+            }
+            location.reload()
+        }
+
+        function editEntry(transactionID) {
+            const transaction = transactions.find(t => t._id === transactionID); // Find the transaction in the list
+            if (!transaction) {
+                alert('Transaction not found.');
+                return;
             }
 
-            return entries;
+            // Show the edit form
+            document.getElementById('editFormContainer').style.display = 'block';
+            
+            // Pre-fill the form with transaction details
+            document.getElementById('editTransactionId').value = transaction._id;
+            document.getElementById('editType').value = transaction.type;
+            document.getElementById('editAmount').value = transaction.amount;
+            document.getElementById('editCurrency').value = transaction.currency;
+            document.getElementById('editCategory').value = transaction.category;
+            document.getElementById('editDate').value = transaction.date;
+            document.getElementById('editDescription').value = transaction.description;
+            document.getElementById('editRecurring').value = transaction.recurring ? 'yes' : 'no';
+            if (transaction.recurring) {
+                document.getElementById('editFrequency').value = transaction.frequency;
+                document.getElementById('editEndDate').value = transaction.end_date;
+                document.getElementById('editRecurringOptions').classList.remove('hidden');
+            } else {
+                document.getElementById('editRecurringOptions').classList.add('hidden');
+            }
+        }
+
+        function cancelEdit() {
+            document.getElementById('editFormContainer').style.display = 'none';
+            location.reload()
+        }
+
+        async function saveEdit() {
+            const updatedTransaction = {
+                _id: document.getElementById('editTransactionId').value,
+                type: document.getElementById('editType').value,
+                amount: document.getElementById('editAmount').value,
+                currency: document.getElementById('editCurrency').value,
+                category: document.getElementById('editCategory').value,
+                date: document.getElementById('editDate').value,
+                description: document.getElementById('editDescription').value,
+                recurring: document.getElementById('editRecurring').value === 'yes',
+                frequency: document.getElementById('editRecurring').value === 'yes' ? document.getElementById('editFrequency').value : null,
+                end_date: document.getElementById('editRecurring').value === 'yes' ? document.getElementById('editEndDate').value : null
+            };
+
+            try {
+                const response = await fetch('/editTransaction', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedTransaction)
+                });
+
+                if (response.ok) {
+                    const updatedTransactions = await response.json();
+                    transactions = updatedTransactions;
+                    displayTransactions(transactions);
+                    cancelEdit();
+                } else {
+                    alert('Error saving transaction');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving transaction');
+            }
+        }
+
+        function calculateTotal(transactions) {
+            let total = 0;
+            transactions.forEach(transaction => {
+                if (transaction.type === 'income') {
+                    total += transaction.amount;
+                } else if (transaction.type === 'expense') {
+                    total -= transaction.amount;
+                }
+            });
+            document.getElementById('amountValue').textContent = total;
         }
         async function calculateTotal(transactions) {
-            const currencyRates = {
-                "AUD": 1.490602,
-                "CAD": 1.363375,
-                "EUR": 0.92729,
-                "GBP": 0.785045,
-                "JPY": 161.4983
-            }
+            const currencyRates = await fetchCurrencyRates();
             const currencyCounts = {};
             let totalIncomeConverted = {};
             let totalExpenseConverted = {};
@@ -226,41 +371,82 @@
                     }
                     if (transaction.type === 'income') {
                         console.log(amount)
-                        totalIncomeConverted[currency] += amount;
+                        totalIncomeConverted[currency] += parseInt(amount);
 
                     } else if (transaction.type === 'expense') {
                         console.log(amount,"expense")
-                        totalExpenseConverted[currency] += amount;
+                        totalExpenseConverted[currency] += parseInt(amount);
                     }
 
                 });
                 
             });
             cur = "USD"
-            most = {name:"",value:0}
+            most = ""
+            mostI = {name:"",value:0}
+            mostE = {name:"",value:0}
+            convertedAmountExpense = 0
             convertedAmountIncome = 0
             forEach(totalIncomeConverted, function(value,key,obj){
                     console.log(key,value)
-                    console.log(value > most["value"])
-                    if(value > most["value"]){
-                        most = {name:key,value:value}
-                        console.log(most)
+                    console.log(value > mostI["value"])
+                    if(value > mostI["value"]){
+                        mostI = {name:key,value:parseInt(value)}
+                        console.log(mostI)
                     }
                     
             }); 
             forEach(totalIncomeConverted, function(value,key,obj){
                     console.log(key,value)
-                    if (key != most["name"]){
-                        console.log(value, key, most["name"], currencyRates)
-                        convertedAmountIncome += convertCurrency(value, key, most["name"], currencyRates);
+                    if (key != mostI["name"]){
+                        console.log(value, key, mostI["name"], currencyRates)
+                        convertedAmountIncome += convertCurrency(parseInt(value), key, mostI["name"], currencyRates);
                     }else{
-                        convertedAmountIncome += value
+                        convertedAmountIncome += parseInt(value)
                     }
             }); 
-            console.log(convertedAmountIncome,"conInc")
+
+            forEach(totalExpenseConverted, function(value,key,obj){
+                    console.log(key,value)
+                    console.log(value > mostE["value"])
+                    if(value > mostE["value"]){
+                        mostE = {name:key,value:value}
+                        console.log(mostE)
+                    }
+                    
+            }); 
+            forEach(totalExpenseConverted, function(value,key,obj){
+                    console.log(key,value)
+                    if (key != mostE["name"]){
+                        console.log(value, key, mostE["name"], currencyRates)
+                        convertedAmountExpense += convertCurrency(value, key, mostE["name"], currencyRates);
+                    }else{
+                        convertedAmountExpense += value
+                    }
+            }); 
+            if (convertedAmountExpense && convertedAmountIncome){
+                if (convertedAmountExpense < convertedAmountIncome){
+                    most = mostI["name"]
+                    total = convertCurrency(convertedAmountExpense, mostE["name"], most, currencyRates);
+                    total = convertedAmountIncome - total
+
+                }else{
+                    most = mostE["name"]
+                    total = convertCurrency(convertedAmountIncome, mostI["name"], most, currencyRates);
+                    total = total - convertedAmountExpense
+                }
+            }else if(convertedAmountExpense && !convertedAmountIncome){
+                most = mostE["name"]
+                total = convertedAmountExpense
+            }else if(convertedAmountIncome && !convertedAmountExpense){
+                most = mostI["name"]
+                total = parseInt(convertedAmountIncome)
+            }
+            total = parseInt(total)
+            console.log(total)
             const amountValue = document.getElementById('amountValue');
             if (amountValue) {
-                amountValue.textContent = `${totalConverted.toFixed(2)} ${most["name"]}`;
+                amountValue.textContent = `${total.toFixed(2)} ${most}`;
             } else {
                 console.error('Element with id "amountValue" not found.');
             }
@@ -268,40 +454,6 @@
 
 
 
-                    /*
-                    const { amount, currency } = entry;
-                    console.log(amount, currency, mostUsedCurrency)
-                    const convertedAmount = convertCurrency(amount, currency, mostUsedCurrency, currencyRates);
-                    
-                    if (transaction.type === 'income') {
-                        totalIncomeConverted += convertedAmount;
-                    } else if (transaction.type === 'expense') {
-                        totalExpenseConverted += convertedAmount;
-                    }
-
-                    if (!currencyCounts[currency]) {
-                        console.log(currencyCounts,"a")
-                        currencyCounts[currency] = 0;
-                        console.log(currencyCounts,"A")
-                    }
-                    currencyCounts[currency] += convertedAmount;
-
-                    if (currencyCounts[currency] > maxCount) {
-                        maxCount = currencyCounts[currency];
-                        
-                        mostUsedCurrency = currency;
-                        console.log(mostUsedCurrency,maxCount,currencyCounts)
-                    }
-                });
-
-            const totalConverted = totalIncomeConverted - totalExpenseConverted;
-
-            const amountValue = document.getElementById('amountValue');
-            if (amountValue) {
-                amountValue.textContent = `${totalConverted.toFixed(2)} ${mostUsedCurrency}`;
-            } else {
-                console.error('Element with id "amountValue" not found.');
-            }*/
         }
         function forEach(obj,callback){
             for(let key in obj){
@@ -322,11 +474,12 @@
             
             try {
                 const response = await fetch(apiUrl);
+               
                 if (!response.ok) {
                     throw new Error('Failed to fetch currency rates');
                 }
                 const data = await response.json();
-
+ console.log(data)
                 return data.rates;
             } catch (error) {
                 console.error('Error fetching currency rates:', error);
@@ -361,70 +514,21 @@
             console.log(amount * rate)
             return amount * rate;
         }
-
-
         function parseJwt(token) {
-            var base64Url = token.split('.')[1];
-            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            return JSON.parse(jsonPayload);
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (error) {
+                console.error('Error parsing token:', error);
+                return null;
+            }
         }
-        function co(){
-            transactions = [
-    {
-        "_id": "668599f748a313b845b4335f",
-        "user_id": "668599cd48a313b845b4335e",
-        "type": "income",
-        "amount": 1000,
-        "currency": "USD",
-        "category": "Job",
-        "date": "2024-07-03T00:00:00.000Z",
-        "description": "GELD",
-        "recurring": false
-    },
-    {
-        "_id": "66859a1048a313b845b43360",
-        "user_id": "668599cd48a313b845b4335e",
-        "type": "expense",
-        "amount": 1000,
-        "currency": "EUR",
-        "category": "essen",
-        "date": "2024-07-03T00:00:00.000Z",
-        "description": "A",
-        "recurring": false
-    },
-    {
-        "_id": "66859a4548a313b845b43361",
-        "user_id": "668599cd48a313b845b4335e",
-        "type": "income",
-        "amount": 1000,
-        "currency": "EUR",
-        "category": "Job",
-        "date": "2024-03-03T00:00:00.000Z",
-        "description": "dfcvbgab",
-        "recurring": false
-    },
-    {
-        "_id": "66859a5f48a313b845b43362",
-        "user_id": "668599cd48a313b845b4335e",
-        "type": "income",
-        "amount": 1000,
-        "currency": "EUR",
-        "category": "Job",
-        "date": "2024-03-03T00:00:00.000Z",
-        "description": "dsf",
-        "recurring": true,
-        "frequency": "monthly",
-        "end_date": null
-    }
-]
-            displayTransactions(transactions);
-            calculateTotal(transactions);
-        }
-        window.addEventListener('load', co);
-    </script>
 
+        window.onload = load;
+    </script>
 </body>
 </html>
