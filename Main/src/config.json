@@ -24,7 +24,7 @@
       "displayData": "../Main/public/functions/displayData.html",
       "profileUrl": "../Main/public/functions/profile.html",
       "aboutUS": "../Main/information/aboutUS.html",
-      "aboutThisProgramm": "../Main/information/about.html",
+      "aboutThisProgramm": "../README.md",
       "privacyPolicy": "../Main/information/privacy.html",
       "ContactUS": "../Main/information/Contact.html",
       "menu": "../Main/src/menu.js",

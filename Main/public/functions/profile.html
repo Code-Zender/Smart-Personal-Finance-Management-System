@@ -46,10 +46,10 @@
         const li = document.createElement('p');
                     
                     li.innerHTML = `
-                        <span class="profile-name">${user.name}</span>
-                        <span class="profile-email">${user.email}</span>
-                        <span class="profile-fullname">${user.fullName}</span>
-                        <span class="profile-created">${user.Created}</span> 
+                        <span class="profile-name">Name: ${user.name}</span>
+                        <span class="profile-email">Email: ${user.email}</span>
+                        <span class="profile-fullname">real Name: ${user.fullName}</span>
+                        <span class="profile-created">Created: ${user.Created}</span> 
                         
                     `;
         document.getElementById('show').appendChild(li);

@@ -22,4 +22,3 @@ Intelligentes persönliches Finanzmanagement-System
     ML/AI: Python (TensorFlow, Scikit-Learn), Jupyter Notebooks für Datenanalyse und Modelltraining
     API-Integration: Finanz-APIs (z.B. Plaid) zur Anbindung an Bankkonten
 
-    hi Marc
