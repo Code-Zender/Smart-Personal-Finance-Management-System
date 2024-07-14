@@ -6,7 +6,7 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { connectDB, addUser, findUserByEmail, clearCollection, addTransaction, getTransactions, delTransaction, editTransaction } = require('./db');
-const { saveInCache, readCache, removeCache, getCodeByEmail, isEmailInCache } = require('./cache.js');
+const { saveInCache, readCache, removeCache, getCodeByEmail, isEmailInCache,timesOpend } = require('./cache.js');
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../Main/src/config.json'), 'utf8'));
 const app = express();
@@ -157,6 +157,8 @@ app.listen(port, () => {
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, config.routes.root));
+  timesOpend() 
+
 });
 
 app.get('/login', (req, res) => {

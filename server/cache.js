@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const Url = "https://xd63nvrk-3000.euw.devtunnels.ms"
 const path = require('path');
+const { stringify } = require('querystring');
 const configPath = path.join(__dirname, '../Main/src/config.json');
 let config;
 
@@ -109,10 +110,58 @@ async function isEmailInCache(email) {
     return false;
 }
 
+async function readCacheTimes() {
+    const link = "timesOpend.json";
+
+    try {
+        const fileData = await fs.readFile(link, 'utf8');
+
+
+        try {
+            const parsedData = JSON.parse(fileData);
+            return parsedData;
+        } catch (jsonErr) {
+            console.log('Error parsing JSON:', jsonErr);
+            return { timesOpened: 0 }; // Rückgabe eines Standardwerts bei JSON-Fehler
+        }
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            console.log('Cache file does not exist');
+            return { timesOpened: 0 };
+        } else {
+            console.log('Error reading cache', err);
+            throw err;
+        }
+    }
+}
+
+async function timesOpend() {
+
+
+    try {
+        const link = "timesOpend.json";
+        let dataNow = await readCacheTimes();
+
+        if (typeof dataNow === 'undefined' || typeof dataNow.timesOpened === 'undefined') {
+            dataNow = { timesOpened: 0 };
+        }
+
+        let timesOpened = dataNow.timesOpened + 1;
+        console.log('Times opened:', timesOpened);
+
+        await fs.writeFile(link, JSON.stringify({ timesOpened: timesOpened }, null, 2));
+  
+    } catch (err) {
+        console.log("Error saving cache", err);
+    }
+}
+
+
 module.exports = {
     saveInCache,
     readCache,
     removeCache,
     getCodeByEmail,
-    isEmailInCache
+    isEmailInCache,
+    timesOpend
 };
