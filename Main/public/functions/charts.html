@@ -3,18 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="..\..\src\charts.css">
+    <script src="..\..\src\charts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Charts</title>
 </head>
 <body>
-    <button title="a" onclick="Test()">A</button>
+    <div class="all">
+        <div class="stats">
+            <canvas id="myChart"></canvas>
+        </div>  
+        <div class="charts">
+          <p> </p>  
+        </div>
+        <div class="actions-Now">
+          <p></p>
+        </div>
+    </div>
+    <div class="all">
+        <div class="stats">
+          <p></p>
+        </div>  
+        <div class="charts">
+          <p> </p>  
+        </div>
+        <div class="actions-Now">
+          <p></p>
+        </div>
+    </div>
+    <div class="all">
+        <div class="stats">
+          <p></p>
+        </div>  
+        <div class="charts">
+          <p> </p>  
+        </div>
+        <div class="actions-Now">
+          <p></p>
+        </div>
+    </div>
+    <div class="all">
+        <div class="stats">
+          <p></p>
+        </div>  
+        <div class="charts">
+          <p> </p>  
+        </div>
+        <div class="actions-Now">
+          <p></p>
+        </div>
+    </div>
 </body>
 </html>
-<script>
-    function Test(){
-        alert(getQueryParam("lname"))
-    }
-    function getQueryParam(param) {
-        let urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-}
-</script>
+

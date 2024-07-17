@@ -155,6 +155,48 @@ app.listen(port, () => {
   runTime(serverStartTime = Date.now());
 });
 
+
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function runTime(serverStartTime) {
+  setInterval(() => {
+    const seconds = Math.floor((Date.now() - serverStartTime) / 1000);
+    // Add functionality as needed
+  }, 1000);
+}
+
+async function sendEmail(to, subject, text) {
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'marc.falkensee@gmail.com',
+      pass: 'rmvg bgpb xhwe sdxb'
+    }
+  });
+
+  let mailOptions = {
+    from: 'marc.falkensee@gmail.com',
+    to: to,
+    subject: subject,
+    html: text
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, config.routes.root));
   timesOpend() 
@@ -224,43 +266,3 @@ app.get('/debug.clear.database', (req, res) => {
 app.get('/cacheWR', (req, res) => {
   res.sendFile(path.join(__dirname, config.routes.cache));
 });
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function runTime(serverStartTime) {
-  setInterval(() => {
-    const seconds = Math.floor((Date.now() - serverStartTime) / 1000);
-    // Add functionality as needed
-  }, 1000);
-}
-
-async function sendEmail(to, subject, text) {
-  let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'marc.falkensee@gmail.com',
-      pass: 'rmvg bgpb xhwe sdxb'
-    }
-  });
-
-  let mailOptions = {
-    from: 'marc.falkensee@gmail.com',
-    to: to,
-    subject: subject,
-    html: text
-  };
-
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Email sent: ' + info.response);
-    }
-  });
-}
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}

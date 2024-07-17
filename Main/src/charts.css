@@ -1,0 +1,22 @@
+body{
+    background-color: #1e1e1e;
+    color: white;
+}
+
+.stats,
+.charts,
+.actions-Now {
+    background-color: #333; /* Dunkler Hintergrund für die Inhaltsbereiche */
+    width: 36%;
+    height: 100%;
+    margin-left: 1.5%;
+    box-shadow: 5px 5px 2px rgba(0, 0, 0, 0.2); /* Leichter Schatten */
+    display: flex;
+    align-items: end;
+    justify-content: center;
+}
+.all {
+    display: flex;
+    margin-top: 2%;
+    height: 100%;
+}
