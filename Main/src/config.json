@@ -29,7 +29,8 @@
       "ContactUS": "../Main/information/Contact.html",
       "menu": "../Main/src/menu.js",
       "cache":"cache.js",
-      "clearDATA": "../Main/debug/clear.html"
+      "clearDATA": "../Main/debug/clear.html",
+      "Dashboard":"../Main/debug/Server Monitoring Dashboard.html"
     },
     "src":{
       "cache": "/cacheWR"

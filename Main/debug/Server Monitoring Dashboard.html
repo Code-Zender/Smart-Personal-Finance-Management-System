@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Monitoring Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        main {
+            margin: 20px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .card h2 {
+            margin-top: 0;
+        }
+        .logs {
+            height: 200px;
+            overflow-y: auto;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .log-item {
+            margin: 5px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Server Monitoring Dashboard</h1>
+</header>
+
+<main>
+    <div class="card">
+        <h2>Server Status</h2>
+        <p id="server-status">Loading...</p>
+
+    </div>
+
+    <div class="card">
+        <h2>Logs</h2>
+        <div class="logs" id="log-container">
+            <div class="log-item">Loading logs...</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Actions</h2>
+        <button onclick="clearLogs()">Clear Logs</button>
+        <button onclick="restartServer()">Restart Server</button> <!-- Neu: Neustart-Schaltfläche -->
+    </div>
+</main>
+
+<script>
+    async function getServerStatus() {
+        try {
+            const response = await fetch('/status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('server-status').innerText = data.status;
+            }
+        } catch (error) {
+            document.getElementById('server-status').innerText = 'Error fetching status';
+        }
+    }
+
+    async function fetchLogs() {
+        try {
+            const response = await fetch('/logs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                const logContainer = document.getElementById('log-container');
+                logContainer.innerHTML = '';
+                data.logs.forEach(log => {
+                    const logItem = document.createElement('div');
+                    logItem.classList.add('log-item');
+                    logItem.innerText = log;
+                    logContainer.appendChild(logItem);
+                });
+            }
+        } catch (error) {
+            const logContainer = document.getElementById('log-container');
+            logContainer.innerHTML = '<div class="log-item">Error fetching logs</div>';
+        }
+    }
+
+    async function clearLogs() {
+        try {
+            await fetch('/clearLogs', {
+                method: 'POST'
+            });
+            fetchLogs();
+        } catch (error) {
+            alert('Error clearing logs');
+        }
+    }
+    async function restartServer() {
+        try {
+            const response = await fetch('/restart', {
+                method: 'POST'
+            });
+            alert('Server wird neu gestartet...');
+        } catch (error) {
+            alert('Fehler beim Neustart des Servers');
+        }
+    }
+
+    // Initial load
+    getServerStatus();
+    fetchLogs();
+
+    // Auto-refresh every 5 seconds
+    setInterval(getServerStatus, 2000);
+    setInterval(fetchLogs, 2000);
+</script>
+
+</body>
+</html>

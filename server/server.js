@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------------------------------------------------------
-const Url = "https://xd63nvrk-3000.euw.devtunnels.ms/" // change based on Codespace/localhost/serverUrl
+const Url = "https://nd27d2c4-3000.euw.devtunnels.ms/" // change based on Codespace/localhost/serverUrl
 // ---------------------------------------------------------------------------------------------------------------------------
 const express = require('express');
 const path = require('path');
@@ -14,14 +14,32 @@ const port = 3000;
 let emailConfirm = false;
 const nodemailer = require('nodemailer');
 let approveNumber = 0;
-const cors = require('cors');
-
+const cors = require('cors');;
+const { exec } = require('child_process');
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../Main')));
 
 connectDB();
 
+
+app.post('/restart', (req, res) => {
+  res.send('Server wird neu gestartet...');
+  setTimeout(() => {
+      exec('node server.js', (error, stdout, stderr) => {
+          if (error) {
+              console.error(`Fehler beim Neustart: ${error.message}`);
+              return;
+          }
+          if (stderr) {
+              console.error(`Stderr: ${stderr}`);
+              return;
+          }
+          console.log(`stdout: ${stdout}`);
+      });
+      process.exit();
+  }, 1000); // Verzögerung von 1 Sekunde, um sicherzustellen, dass die Antwort gesendet wird
+});
 app.post('/register', async (req, res) => {
   const { name, fullName, email, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -149,6 +167,24 @@ app.post('/getProfile',async(req,res)=>{
   res.json(await findUserByEmail(email)) 
 })
 
+app.post('/status', (req, res) => {
+  res.json({ status: 'Server is running' });
+});
+
+app.post('/logs', (req, res) => {
+  const logs = [
+    "Log entry 1",
+    "Log entry 2",
+    "Log entry 3"
+  ];
+  res.json({ logs });
+});
+
+app.post('/clearLogs', (req, res) => {
+  // Logic to clear logs
+  res.json({ success: true });
+});
+
 app.listen(port, () => {
   console.log(`Server running at ${Url}`);
   console.log("Server started at " + new Date());
@@ -265,4 +301,7 @@ app.get('/debug.clear.database', (req, res) => {
 
 app.get('/cacheWR', (req, res) => {
   res.sendFile(path.join(__dirname, config.routes.cache));
+});
+app.get('/Dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, config.routes.Dashboard));
 });
