@@ -30,16 +30,50 @@
         .card h2 {
             margin-top: 0;
         }
-        .logs {
-            height: 200px;
-            overflow-y: auto;
-            background-color: #333;
-            color: #fff;
+        .status {
+            font-size: 18px;
             padding: 10px;
             border-radius: 5px;
+            text-align: center;
+            color: #fff;
+        }
+        .status.loading {
+            background-color: #ff9800; /* Orange für 'Loading...' */
+        }
+        .status.success {
+            background-color: #4CAF50; /* Grün für Erfolg */
+        }
+        .status.error {
+            background-color: #f44336; /* Rot für Fehler */
+        }
+        .status.stopped {
+            background-color: #9e9e9e; /* Grau für gestoppten Status */
+        }
+        .logs {
+            max-height: 500px; /* Maximalhöhe für das Log-Fenster */
+            overflow-y: auto;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: monospace; /* Monospace für besseren Lesefluss */
         }
         .log-item {
             margin: 5px 0;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .log-item.info {
+            background-color: #2e2e2e;
+        }
+        .log-item.warn {
+            background-color: #ffcc00; /* Gelb für Warnungen */
+            color: #000;
+        }
+        .log-item.error {
+            background-color: #ff4c4c; /* Rot für Fehler */
+            color: #fff;
         }
         button {
             background-color: #4CAF50;
@@ -57,6 +91,112 @@
         button:hover {
             background-color: #45a049;
         }
+        .btn-stop {
+            background-color: #f44336; /* Rot für Stoppen */
+        }
+        .btn-start {
+            background-color: #4CAF50; /* Grün für Starten */
+        }
+        .btn-restart {
+            background-color: #ff9800; /* Orange für Neustarten */
+        }
+        .btn-stop:hover {
+            background-color: #d32f2f;
+        }
+        .btn-startc {
+            background-color: #388e3c;
+        }
+        .btn-restart:hover {
+            background-color: #ff9800;
+        }
+        .button {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .button img {
+            margin-right: 8px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .modal-header h2 {
+            margin: 0;
+        }
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .modal-body {
+            padding: 10px 0;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn.okay {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn.okay:hover {
+            background-color: #218838;
+        }
+        .btn.help {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn.help:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -68,10 +208,30 @@
 <main>
     <div class="card">
         <h2>Server Status</h2>
-        <p id="server-status">Loading...</p>
+        <p id="server-status" class="status loading">Loading...</p>
+        <div class="container">
+            <button class="button" onclick="showModal()">
+                <img src="https://img.icons8.com/material-outlined/24/ffffff/plug.png" alt="Verbinden Icon"/> Verbinden
+            </button>
 
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Verbinden</h2>
+                        <span class="close" onclick="closeModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Adress:</strong> <a href="https://xd63nvrk-2555.euw.devtunnels.ms/">https://xd63nvrk-2555.euw.devtunnels.ms/</a> </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn okay" onclick="closeModal()">Okay</button>
+                        <button class="btn help">Hilfe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
+    
     <div class="card">
         <h2>Logs</h2>
         <div class="logs" id="log-container">
@@ -81,13 +241,29 @@
 
     <div class="card">
         <h2>Actions</h2>
+        <button class="btn-start" onclick="startServer()">Start Server</button>
+        <button class="btn-stop" onclick="stopServer()">Stop Server</button>
+        <button class="btn-restart" onclick="restartServer()">Restart Server</button>
         <button onclick="clearLogs()">Clear Logs</button>
-        <button onclick="restartServer()">Restart Server</button> <!-- Neu: Neustart-Schaltfläche -->
     </div>
 </main>
 
 <script>
+    async function restartServer(){
+        try {
+            const response = await fetch('/restart', {
+                method: 'POST'
+            });
+            if (response.ok) {
+                getServerStatus(); // Status nach dem Starten aktualisieren
+            } else {
+                const errorText = await response.text();
+            }
+        } catch (error) {
+        }
+    }
     async function getServerStatus() {
+        const statusElement = document.getElementById('server-status');
         try {
             const response = await fetch('/status', {
                 method: 'POST',
@@ -97,10 +273,30 @@
             });
             if (response.ok) {
                 const data = await response.json();
-                document.getElementById('server-status').innerText = data.status;
+                const statusText = data.status;
+
+                if (statusText.includes('running')) {
+                    statusElement.innerText = 'Server running';
+                    statusElement.classList.remove('loading', 'error', 'stopped');
+                    statusElement.classList.add('success');
+                } else if (statusText.includes('stopped')) {
+                    statusElement.innerText = 'Server Stopped';
+                    statusElement.classList.remove('loading', 'success', 'error');
+                    statusElement.classList.add('stopped');
+                } else {
+                    statusElement.innerText = 'Error fetching status';
+                    statusElement.classList.remove('loading', 'success', 'stopped');
+                    statusElement.classList.add('error');
+                }
+            } else {
+                statusElement.innerText = 'Error fetching status';
+                statusElement.classList.remove('loading', 'success', 'stopped');
+                statusElement.classList.add('error');
             }
         } catch (error) {
-            document.getElementById('server-status').innerText = 'Error fetching status';
+            statusElement.innerText = 'Error fetching status';
+            statusElement.classList.remove('loading', 'success', 'stopped');
+            statusElement.classList.add('error');
         }
     }
 
@@ -116,38 +312,80 @@
                 const data = await response.json();
                 const logContainer = document.getElementById('log-container');
                 logContainer.innerHTML = '';
-                data.logs.forEach(log => {
+                data.forEach(log => {
                     const logItem = document.createElement('div');
                     logItem.classList.add('log-item');
-                    logItem.innerText = log;
+                    if (log.type === 'warn') {
+                        logItem.classList.add('warn');
+                    } else if (log.type === 'error') {
+                        logItem.classList.add('error');
+                    } else {
+                        logItem.classList.add('info');
+                    }
+                    logItem.innerText = `${log.timestamp} [${log.type}]: ${log.message}`;
                     logContainer.appendChild(logItem);
                 });
+            } else {
+                const errorText = await response.text();
+                const logContainer = document.getElementById('log-container');
+                logContainer.innerHTML = `<div class="log-item">Error fetching logs: ${errorText}</div>`;
             }
         } catch (error) {
             const logContainer = document.getElementById('log-container');
-            logContainer.innerHTML = '<div class="log-item">Error fetching logs</div>';
+            logContainer.innerHTML = `<div class="log-item">Error fetching logs: ${error.message}</div>`;
         }
     }
 
     async function clearLogs() {
         try {
-            await fetch('/clearLogs', {
+            const response = await fetch('/clearLogs', {
                 method: 'POST'
             });
-            fetchLogs();
+            if (response.ok) {
+                await fetchLogs(); // Logs neu laden, um die gelöschten Logs zu reflektieren
+            } else {
+                const errorText = await response.text();
+            }
         } catch (error) {
-            alert('Error clearing logs');
         }
     }
-    async function restartServer() {
+
+    async function startServer() {
         try {
-            const response = await fetch('/restart', {
+            const response = await fetch('/start', {
                 method: 'POST'
             });
-            alert('Server wird neu gestartet...');
+            if (response.ok) {
+                getServerStatus(); // Status nach dem Starten aktualisieren
+            } else {
+                const errorText = await response.text();
+            }
         } catch (error) {
-            alert('Fehler beim Neustart des Servers');
         }
+    }
+
+    async function stopServer() {
+        try {
+            const response = await fetch('/stop', {
+                method: 'POST'
+            });
+            if (response.ok) {
+                getServerStatus(); // Status nach dem Stoppen aktualisieren
+            } else {
+                const errorText = await response.text();
+            }
+        } catch (error) {
+        }
+    }
+
+    function showModal() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "block";
+    }
+
+    function closeModal() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
     }
 
     // Initial load
@@ -155,8 +393,8 @@
     fetchLogs();
 
     // Auto-refresh every 5 seconds
-    setInterval(getServerStatus, 2000);
-    setInterval(fetchLogs, 2000);
+    setInterval(getServerStatus, 5000);
+    setInterval(fetchLogs, 5000);
 </script>
 
 </body>

@@ -26,12 +26,22 @@
       <input type="password" id="password" name="password" required>
       <br>
       <button type="submit">Register</button>
+      <br>
+      <div class="login-container">
+        <button type="button" class="google-button" onclick="google()">
+            <img src='https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_"G"_logo.svg' alt="Google Logo" class="google-logo">
+            Mit Google anmelden
+        </button>
+    </div>
     </form>
   </div>
 </body>
 </html>
 
 <script>
+  function google(){
+    window.location.href = "/auth/google"
+  }
   document.getElementById('transactionForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('name').value;

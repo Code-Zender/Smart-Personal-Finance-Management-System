@@ -41,3 +41,30 @@ button:hover {
 .hidden {
     display: none;
 }
+.login-container {
+    text-align: center;
+}
+
+.google-button {
+    background-color: #ffffff; /* Weißer Hintergrund */
+    color: #000000; /* Schwarzer Text */
+    border: 1px solid #c1c1c1; /* Schwarz-graue Umrandung */
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.google-button:hover {
+    background-color: #f1f1f1; /* Hellgrau für Hover-Effekt */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Leichter Schatten für Hover-Effekt */
+}
+
+.google-logo {
+    width: 20px; /* Größe des Google-Logos */
+    height: 20px;
+    margin-right: 10px; /* Abstand zwischen Logo und Text */
+}

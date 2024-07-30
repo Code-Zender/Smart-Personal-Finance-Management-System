@@ -1,31 +1,40 @@
 angular.module('myApp', [])
-.controller('myCtrl', ['$scope', function($scope) {
-    const token = localStorage.getItem('token');
-    if (token) {
-        const user = parseJwt(token);
+.controller('myCtrl', ['$scope', async function($scope) {
+    const user = await profileData();
+    console.log(user);
+    console.log(user.name);
+
+    $scope.$apply(function() {
         $scope.message = user.name;
-        let urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get("back")) {
-            $scope.back = "back";
-        } else {
-            $scope.back = "";
-        }
-    } else {
-        $scope.back = "";
-    }
-    
+    });
+
     $scope.updateMessage = function() {
         $scope.message = 'AAAAAAAAA';
     };
 }]);
 
-function parseJwt(token) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
+async function profileData() {
+    try {
+        const response = await fetch('/profile', {
+            method: 'GET',
+            credentials: 'include', // Wenn Sie Cookies oder Sitzungsinformationen senden möchten
+            headers: {
+                'Content-Type': 'application/json',
+                // Fügen Sie hier ggf. Authentifizierungstokens hinzu
+                // 'Authorization': 'Bearer ' + token,
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            return data;
+        } else {
+            console.error('Failed to fetch profile:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
 // Function to load JSON config file
