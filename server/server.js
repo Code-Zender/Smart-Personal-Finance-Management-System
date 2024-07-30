@@ -1,45 +1,29 @@
-// ---------------------------------------------------------------------------------------------------------------------------
-const Url = "https://nd27d2c4-3000.euw.devtunnels.ms/" // change based on Codespace/localhost/serverUrl
-// ---------------------------------------------------------------------------------------------------------------------------
+const Url ="https://xd63nvrk-2555.euw.devtunnels.ms"
 const express = require('express');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { log, error, warn } = require('./Wrapper.js');
 const { connectDB, addUser, findUserByEmail, clearCollection, addTransaction, getTransactions, delTransaction, editTransaction } = require('./db');
-const { saveInCache, readCache, removeCache, getCodeByEmail, isEmailInCache,timesOpend } = require('./cache.js');
+const { saveInCache, readCache, removeCache, getCodeByEmail, isEmailInCache, timesOpend } = require('./cache.js');
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../Main/src/config.json'), 'utf8'));
 const app = express();
-const port = 3000;
+const port = 2555;
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const session = require('express-session');
 let emailConfirm = false;
 const nodemailer = require('nodemailer');
 let approveNumber = 0;
-const cors = require('cors');;
-const { exec } = require('child_process');
+const cors = require('cors');
+const { exec, execSync, spawn } = require('child_process');
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../Main')));
 
 connectDB();
 
-
-app.post('/restart', (req, res) => {
-  res.send('Server wird neu gestartet...');
-  setTimeout(() => {
-      exec('node server.js', (error, stdout, stderr) => {
-          if (error) {
-              console.error(`Fehler beim Neustart: ${error.message}`);
-              return;
-          }
-          if (stderr) {
-              console.error(`Stderr: ${stderr}`);
-              return;
-          }
-          console.log(`stdout: ${stdout}`);
-      });
-      process.exit();
-  }, 1000); // Verzögerung von 1 Sekunde, um sicherzustellen, dass die Antwort gesendet wird
-});
 app.post('/register', async (req, res) => {
   const { name, fullName, email, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -51,7 +35,7 @@ app.post('/register', async (req, res) => {
     try {
       await addUser(user);
       const loginUrl = Url + 'confirm';
-      const message = `Welcome ${name}, your registration was successful! Click <a href="${loginUrl}">here</a> to confirm your Email.`;
+      const message = 'Welcome '+name+', your registration was successful! Click <a href="'+loginUrl+'">here</a> to confirm your Email.';
       sendEmail(email, "Confirm your E-mail", message);
       const token = jwt.sign({ email: user.email, name: user.name, userID: user._id.toString() }, 'your_jwt_secret', { expiresIn: '1h' });
       res.json({ token });
@@ -96,7 +80,7 @@ app.post('/confirm', (req, res) => {
 
 app.post('/clear', async (req, res) => {
   try {
-    console.warn("--------------------Warning!--------------------");
+    console.error("--------------------Warning!--------------------");
     console.warn("             cleared all user-data!");
     console.warn("--------------------Warning!--------------------");
     await clearCollection('user-data');
@@ -158,85 +142,94 @@ app.post('/delTransaction', async (req, res) => {
 
 app.post('/editTransaction', async (req, res) => {
   const { _id, type, amount, currency, category, description, frequency, date } = req.body;
-  console.log();
-  res.send(await editTransaction(_id, type, amount, currency, category, description, frequency, date))
-});
-app.post('/getProfile',async(req,res)=>{
-  const {email}=req.body;
-  console.log(await findUserByEmail(email))
-  res.json(await findUserByEmail(email)) 
-})
-
-app.post('/status', (req, res) => {
-  res.json({ status: 'Server is running' });
+  res.send(await editTransaction(_id, type, amount, currency, category, description, frequency, date));
 });
 
-app.post('/logs', (req, res) => {
-  const logs = [
-    "Log entry 1",
-    "Log entry 2",
-    "Log entry 3"
-  ];
-  res.json({ logs });
+app.post('/getProfile', async (req, res) => {
+  const { email } = req.body;
+  res.json(await findUserByEmail(email));
 });
 
-app.post('/clearLogs', (req, res) => {
-  // Logic to clear logs
-  res.json({ success: true });
-});
+passport.use(new GoogleStrategy({
 
-app.listen(port, () => {
-  console.log(`Server running at ${Url}`);
-  console.log("Server started at " + new Date());
-  runTime(serverStartTime = Date.now());
-});
-
-
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function runTime(serverStartTime) {
-  setInterval(() => {
-    const seconds = Math.floor((Date.now() - serverStartTime) / 1000);
-    // Add functionality as needed
-  }, 1000);
-}
-
-async function sendEmail(to, subject, text) {
-  let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'marc.falkensee@gmail.com',
-      pass: 'rmvg bgpb xhwe sdxb'
+  callbackURL: `${Url}/auth/google/callback`
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+    let user = await findUserByEmail(profile.emails[0].value);
+    console.log(profile)
+    if (!user) {
+      user = {
+        name: profile.displayName,
+        email: profile.emails[0].value,
+        googleId: profile.id,
+        avatar: profile.photos[0].value,
+        passwort: null
+      };
+      await addUser(user);
     }
+    return done(null, user);
+  } catch (err) {
+    return done(err, null);
+  }
+}));
+
+passport.serializeUser((user, done) => {
+  done(null, user.email);
+});
+
+passport.deserializeUser(async (email, done) => {
+  try {
+    const user = await findUserByEmail(email);
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+});
+                           
+app.use(session({ resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get('/auth/google',
+  (req, res, next) => {
+    passport.authenticate('google', {
+      scope: ['profile', 'email'],
+      prompt: 'select_account'
+    })(req, res, next);
+  }
+);
+
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/' }),
+  (req, res) => {
+    res.redirect('/');
+  }
+);
+
+app.get('/logout', (req, res, next) => {
+  req.logout((err) => {
+    if (err) { return next(err); }
+    req.session.destroy((err) => {
+      res.redirect('/');
+    });
   });
+});
 
-  let mailOptions = {
-    from: 'marc.falkensee@gmail.com',
-    to: to,
-    subject: subject,
-    html: text
-  };
-
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Email sent: ' + info.response);
-    }
-  });
-}
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+app.get('/profile', (req, res) => {
+  console.log("tried but:")
+  if (req.isAuthenticated()) {
+    res.json(req.user);
+    console.log(req.user)
+    console.log(req)
+  } else {
+    console.log('Not authenticated')
+    res.json('Not authenticated');
+  }
+});
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, config.routes.root));
-  timesOpend() 
-
+  timesOpend();
 });
 
 app.get('/login', (req, res) => {
@@ -302,6 +295,79 @@ app.get('/debug.clear.database', (req, res) => {
 app.get('/cacheWR', (req, res) => {
   res.sendFile(path.join(__dirname, config.routes.cache));
 });
+
 app.get('/Dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, config.routes.Dashboard));
 });
+
+app.listen(port, () => {
+  console.log(`Server running at ${Url}`);
+  console.log("Server started at " + new Date());
+  runTime(serverStartTime = Date.now());
+  logMessage("log","Server running at "+Url)
+});
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function runTime(serverStartTime) {
+  setInterval(() => {
+    const seconds = Math.floor((Date.now() - serverStartTime) / 1000);
+    // Add functionality as needed
+  }, 1000);
+}
+
+async function sendEmail(to, subject, text) {
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'smart.financial.management.system@gmail.com',
+      pass: '**** **** **** ****'
+    }        
+  });
+
+  let mailOptions = {
+    from: 'smart.financial.management.system@gmail.com',
+    to: to,
+    subject: subject,
+    html: text
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
+}
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function logMessage(type, message) {
+  const logEntry = {
+      type,
+      message,
+      timestamp: new Date().toISOString(),
+      data: null
+  };
+  const logFilePath = path.join(__dirname, 'logs.json');
+  fs.readFile(logFilePath, 'utf8', (err, data) => {
+      if (err) {
+          console.error('Error reading log file:', err);
+          return;
+      }
+  
+      const logs = JSON.parse(data || '[]');
+      
+      logs.push(logEntry);
+      fs.writeFile(logFilePath, JSON.stringify(logs, null, 2), (err) => {
+          if (err) {
+              console.error('Error writing to log file:', err);
+          }
+      });
+  });
+}

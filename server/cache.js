@@ -13,7 +13,6 @@ async function loadConfig() {
     try {
         const data = await fs.readFile(configPath, 'utf8');
         config = JSON.parse(data);
-        console.log('Config loaded:', config);
     } catch (error) {
         console.error('Error loading config:', error);
     }
