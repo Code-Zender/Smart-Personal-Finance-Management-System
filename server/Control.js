@@ -1,8 +1,8 @@
-const Url = "https://xd63nvrk-3000.euw.devtunnels.ms/"; // Ändere dies basierend auf Codespace/localhost/serverUrl
+const Url = "localhost"; // Ändere dies basierend auf Codespace/localhost/serverUrl
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../Main/src/config.json'), 'utf8'));
+const config = JSON.parse(fs.readFileSync(path.join(__dirname, '/modules/configs/config.json'), 'utf8'));
 const app = express();
 const port = 3000;const cors = require('cors');
 const { exec, execSync, spawn } = require('child_process');
@@ -63,7 +63,7 @@ app.post('/status', (req, res) => {
 });
 
 app.post('/logs', (req, res) => {
-  const logFilePath = path.join(__dirname, 'logs.json');
+  const logFilePath = path.join(__dirname, '/data/logs.json');
   fs.readFile(logFilePath, 'utf8', (err, data) => {
     if (err) {
       res.status(500).send('Error reading log file');

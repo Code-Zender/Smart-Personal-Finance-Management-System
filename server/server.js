@@ -1,18 +1,23 @@
-const Url ="https://xd63nvrk-2555.euw.devtunnels.ms"
+const Url ="localhost"
 const express = require('express');
-const path = require('path');
+const path = require('path')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { log, error, warn } = require('./Wrapper.js');
-const { connectDB, addUser, findUserByEmail, clearCollection, addTransaction, getTransactions, delTransaction, editTransaction } = require('./db');
-const { saveInCache, readCache, removeCache, getCodeByEmail, isEmailInCache, timesOpend } = require('./cache.js');
+const { connectDB, addUser, findUserByEmail, clearCollection, addTransaction, getTransactions, delTransaction, editTransaction } = require('./modules/database/db.js');
+const { functions } = require('./modules/functions/functions.js')
+const { saveInCache, readCache, removeCache, getCodeByEmail, isEmailInCache, timesOpend } = require('./modules/cache/cache.js');
 const fs = require('fs');
-const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../Main/src/config.json'), 'utf8'));
+const config = JSON.parse(fs.readFileSync(path.join(__dirname, '/modules/configs/config.json'), 'utf8'));
 const app = express();
 const port = 2555;
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
+const get = require("./modules/initialize/get.js")
+require('dotenv').config({ path: 'server/modules/configs/secrets/.env' });
+
+
 let emailConfirm = false;
 const nodemailer = require('nodemailer');
 let approveNumber = 0;
@@ -21,12 +26,20 @@ const { exec, execSync, spawn } = require('child_process');
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../Main')));
+var clientID = process.env.GOOGLE_CLIENT_ID;
+var clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+console.log(clientID)
 
+
+
+get(app);
+functions(app)
 connectDB();
 
 app.post('/register', async (req, res) => {
   const { name, fullName, email, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
+
   let date = new Date();
   const user = { name, fullName, email, password: hashedPassword, "Created": date };
   const userT = await findUserByEmail(email);
@@ -117,33 +130,6 @@ app.post('/prove', async (req, res) => {
   }
 });
 
-app.post('/addFinances', async (req, res) => {
-  try {
-    const transaction = req.body;
-    await addTransaction(transaction);
-    res.status(200).send('Transaction successfully added');
-  } catch (error) {
-    console.error('Error adding transaction:', error);
-    res.status(500).send('Error adding transaction');
-  }
-});
-
-app.post('/getTransactions', async (req, res) => {
-  const { id } = req.body;
-  const transactions = await getTransactions(id);
-  res.json(transactions);
-});
-
-app.post('/delTransaction', async (req, res) => {
-  const { id } = req.body;
-  const isDel = await delTransaction(id);
-  res.json(isDel);
-});
-
-app.post('/editTransaction', async (req, res) => {
-  const { _id, type, amount, currency, category, description, frequency, date } = req.body;
-  res.send(await editTransaction(_id, type, amount, currency, category, description, frequency, date));
-});
 
 app.post('/getProfile', async (req, res) => {
   const { email } = req.body;
@@ -151,7 +137,8 @@ app.post('/getProfile', async (req, res) => {
 });
 
 passport.use(new GoogleStrategy({
-
+  clientID: clientID,
+  clientSecret: clientSecret,
   callbackURL: `${Url}/auth/google/callback`
 }, async (accessToken, refreshToken, profile, done) => {
   try {
@@ -160,6 +147,7 @@ passport.use(new GoogleStrategy({
     if (!user) {
       user = {
         name: profile.displayName,
+        clientID: profile.clientID,
         email: profile.emails[0].value,
         googleId: profile.id,
         avatar: profile.photos[0].value,
@@ -227,78 +215,6 @@ app.get('/profile', (req, res) => {
   }
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.root));
-  timesOpend();
-});
-
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.login));
-});
-
-app.get('/register', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.register));
-});
-
-app.get('/config', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.config));
-});
-
-app.get('/wait', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.wait));
-});
-
-app.get('/confirm', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.confirm));
-});
-
-app.get('/prove', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.prove));
-});
-
-app.get('/charts', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.charts));
-});
-
-app.get('/addFinances', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.addFinances));
-});
-
-app.get('/displayData', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.displayData));
-});
-
-app.get('/profileUrl', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.profileUrl));
-});
-
-app.get('/aboutUS', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.aboutUS));
-});
-
-app.get('/aboutThisProgramm', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.aboutThisProgramm));
-});
-
-app.get('/privacyPolicy', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.privacyPolicy));
-});
-
-app.get('/ContactUS', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.ContactUS));
-});
-
-app.get('/debug.clear.database', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.clearDATA));
-});
-
-app.get('/cacheWR', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.cache));
-});
-
-app.get('/Dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, config.routes.Dashboard));
-});
 
 app.listen(port, () => {
   console.log(`Server running at ${Url}`);
