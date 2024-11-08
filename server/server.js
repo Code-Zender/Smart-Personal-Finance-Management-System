@@ -10,7 +10,7 @@ const { Local } = require('./modules/Account/local.js')
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, '/modules/configs/config.json'), 'utf8'));
 const app = express();
-const port = 4321;
+const port = 8976;
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
@@ -30,7 +30,7 @@ var clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 console.log(clientID)
 
 
-
+app.set('trust proxy', 1)
 get(app);
 functions(app)
 connectDB();
@@ -130,7 +130,7 @@ passport.deserializeUser(async (email, done) => {
   }
 });
                            
-app.use(session({ resave: false, saveUninitialized: true }));
+app.use(session({ secret: process.env.key,resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 

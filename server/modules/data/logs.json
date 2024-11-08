@@ -4,5 +4,17 @@
     "message": "Server erfolgreich gestartet",
     "timestamp": "2024-11-08T12:04:23.914Z",
     "data": null
+  },
+  {
+    "type": "log",
+    "message": "Server erfolgreich gestartet",
+    "timestamp": "2024-11-08T12:22:20.777Z",
+    "data": null
+  },
+  {
+    "type": "log",
+    "message": "Server erfolgreich gestartet",
+    "timestamp": "2024-11-08T12:26:02.847Z",
+    "data": null
   }
 ]

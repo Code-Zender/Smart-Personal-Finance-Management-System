@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, '/modules/configs/config.json'), 'utf8'));
 const app = express();
-const port = 1234;
+const port = 6543;
 const cors = require('cors');
 const { exec, execSync, spawn } = require('child_process');
 require('better-logging')(console)
