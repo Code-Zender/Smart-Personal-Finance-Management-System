@@ -7,6 +7,7 @@ const { log, error, warn } = require('./Wrapper.js');
 const { connectDB, addUser, findUserByEmail, clearCollection, addTransaction, getTransactions, delTransaction, editTransaction } = require('./modules/database/db.js');
 const { functions } = require('./modules/functions/functions.js')
 const { saveInCache, readCache, removeCache, getCodeByEmail, isEmailInCache, timesOpend } = require('./modules/cache/cache.js');
+const { Local } = require('../modules/Account/local.js')
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, '/modules/configs/config.json'), 'utf8'));
 const app = express();
@@ -16,13 +17,10 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
 const get = require("./modules/initialize/get.js")
 require('dotenv').config({ path: 'server/modules/configs/secrets/.env' });
-
-
 let emailConfirm = false;
 const nodemailer = require('nodemailer');
 let approveNumber = 0;
 const cors = require('cors');
-const { exec, execSync, spawn } = require('child_process');
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../Main')));
@@ -31,54 +29,10 @@ var clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 console.log(clientID)
 
 
-
 get(app);
 functions(app)
 connectDB();
-
-app.post('/register', async (req, res) => {
-  const { name, fullName, email, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  let date = new Date();
-  const user = { name, fullName, email, password: hashedPassword, "Created": date };
-  const userT = await findUserByEmail(email);
-
-  if (!userT) {
-    try {
-      await addUser(user);
-      const loginUrl = Url + 'confirm';
-      const message = 'Welcome '+name+', your registration was successful! Click <a href="'+loginUrl+'">here</a> to confirm your Email.';
-      sendEmail(email, "Confirm your E-mail", message);
-      const token = jwt.sign({ email: user.email, name: user.name, userID: user._id.toString() }, 'your_jwt_secret', { expiresIn: '1h' });
-      res.json({ token });
-    } catch (error) {
-      res.status(500).send('Error registering user');
-    }
-  } else {
-    res.status(400).send('Email already in use');
-  }
-});
-
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await findUserByEmail(email);
-    if (!user) {
-      return res.status(400).send('Cannot find user');
-    }
-
-    if (await bcrypt.compare(password, user.password)) {
-      const token = jwt.sign({ email: user.email, userID: user._id.toString() }, 'your_jwt_secret', { expiresIn: '0.5h' });
-      res.json({ token });
-    } else {
-      res.status(403).send('Invalid credentials');
-    }
-  } catch (error) {
-    res.status(500).send('Error logging in');
-  }
-});
+Local(app)
 
 app.post('/wait', (req, res) => {
   res.send(emailConfirm);
