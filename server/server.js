@@ -1,6 +1,7 @@
 const Url ="localhost"
 const express = require('express');
 const path = require('path')
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { log, error, warn } = require('./Wrapper.js');
 const { connectDB, addUser, findUserByEmail, clearCollection, addTransaction, getTransactions, delTransaction, editTransaction } = require('./modules/database/db.js');
@@ -16,8 +17,6 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
 const get = require("./modules/initialize/get.js")
 require('dotenv').config({ path: 'server/modules/configs/secrets/.env' });
-
-
 let emailConfirm = false;
 const nodemailer = require('nodemailer');
 let approveNumber = 0;
@@ -28,7 +27,6 @@ app.use(express.static(path.join(__dirname, '../Main')));
 var clientID = process.env.GOOGLE_CLIENT_ID;
 var clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 console.log(clientID)
-
 
 
 get(app);
