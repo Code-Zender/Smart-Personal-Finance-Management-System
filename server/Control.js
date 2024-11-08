@@ -4,13 +4,14 @@ const path = require('path');
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, '/modules/configs/config.json'), 'utf8'));
 const app = express();
-const port = 3000;const cors = require('cors');
+const port = 6543;
+const cors = require('cors');
 const { exec, execSync, spawn } = require('child_process');
-
+require('better-logging')(console)
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../Main')));
-
+console.logLevel = 4
 
 let serverProcess = null;
 
@@ -63,7 +64,8 @@ app.post('/status', (req, res) => {
 });
 
 app.post('/logs', (req, res) => {
-  const logFilePath = path.join(__dirname, '/data/logs.json');
+  const logFilePath = path.join(__dirname, './modules/data/logs.json');
+  console.log(logFilePath)
   fs.readFile(logFilePath, 'utf8', (err, data) => {
     if (err) {
       res.status(500).send('Error reading log file');
@@ -125,7 +127,9 @@ function logMessage(type, message) {
         timestamp: new Date().toISOString(),
         data: null
     };
-    const logFilePath = path.join(__dirname, 'logs.json');
+    console.log(__dirname)
+    const logFilePath = path.join(__dirname, './modules/data/logs.json');
+    console.log(logFilePath)
     fs.readFile(logFilePath, 'utf8', (err, data) => {
         if (err) {
             console.error('Error reading log file:', err);

@@ -18,6 +18,6 @@
     "menu": "../../../Main/src/menu.js",
     "cache":"../../../server/modules/cache/cache.json",
     "clearDATA": "../../../Main/debug/clear.html",
-    "Dashboard":"../../../Main/debug/Server Monitoring Dashboard.html"
+    "Dashboard":"../Main/debug/Server Monitoring Dashboard.html"
   }
 }

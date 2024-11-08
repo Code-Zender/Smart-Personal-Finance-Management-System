@@ -1,7 +1,7 @@
 
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-function Local(){
+function Local(app){
 
   app.post('/register', async (req, res) => {
       const { name, fullName, email, password } = req.body;

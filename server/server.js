@@ -7,11 +7,11 @@ const { log, error, warn } = require('./Wrapper.js');
 const { connectDB, addUser, findUserByEmail, clearCollection, addTransaction, getTransactions, delTransaction, editTransaction } = require('./modules/database/db.js');
 const { functions } = require('./modules/functions/functions.js')
 const { saveInCache, readCache, removeCache, getCodeByEmail, isEmailInCache, timesOpend } = require('./modules/cache/cache.js');
-const { Local } = require('../modules/Account/local.js')
+const { Local } = require('./modules/Account/local.js')
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, '/modules/configs/config.json'), 'utf8'));
 const app = express();
-const port = 2555;
+const port = 8976;
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
@@ -27,7 +27,6 @@ app.use(express.static(path.join(__dirname, '../Main')));
 var clientID = process.env.GOOGLE_CLIENT_ID;
 var clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 console.log(clientID)
-
 
 get(app);
 functions(app)
@@ -128,7 +127,7 @@ passport.deserializeUser(async (email, done) => {
   }
 });
                            
-app.use(session({ resave: false, saveUninitialized: true }));
+app.use(session({ secret: process.env.key,resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
